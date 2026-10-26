@@ -70,7 +70,6 @@ async function handleRequest(
     const searchParams = request.nextUrl.searchParams.toString();
     const targetUrl = `${BACKEND_URL}/${path}${searchParams ? `?${searchParams}` : ''}`;
 
-    console.log(`[PROXY] ${method} ${targetUrl}`);
 
     // Preparar headers
     const headers = new Headers();
@@ -81,14 +80,12 @@ async function handleRequest(
       const value = request.headers.get(headerName);
       if (value) {
         headers.set(headerName, value);
-        console.log(`[PROXY] Header ${headerName}:`, value);
       }
     });
 
     // Garantir content-type para POST/PUT/PATCH se não existir
     if (['POST', 'PUT', 'PATCH'].includes(method) && !headers.get('content-type')) {
       headers.set('content-type', 'application/json');
-      console.log(`[PROXY] Added default content-type: application/json`);
     }
 
     // Preparar body se necessário
@@ -96,7 +93,6 @@ async function handleRequest(
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
         body = await request.text();
-        console.log(`[PROXY] Body:`, body);
       } catch (error) {
         console.error(`[PROXY] Error reading body:`, error);
       }
@@ -109,7 +105,6 @@ async function handleRequest(
       body,
     });
 
-    console.log(`[PROXY] Response status:`, response.status, response.statusText);
 
     // Ler a resposta
     const responseData = await response.text();
@@ -117,7 +112,6 @@ async function handleRequest(
     if (response.status >= 400) {
       console.error(`[PROXY] Error response:`, responseData);
     } else {
-      console.log(`[PROXY] Success response:`, responseData.substring(0, 200) + '...');
     }
     
     // Criar resposta com headers CORS

@@ -143,12 +143,8 @@ export default function AtividadesPage() {
     );
 
     try {
-      console.log(`Debug - Tentando atualizar ${field} para:`, value);
-      console.log(`Debug - ID da atividade:`, id);
-      console.log(`Debug - Token disponível:`, !!token);
       
       const requestBody = { [field]: value };
-      console.log(`Debug - Body da requisição:`, requestBody);
       
       const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES_OLD)}/${id}`, {
         method: 'PUT',
@@ -159,12 +155,9 @@ export default function AtividadesPage() {
         body: JSON.stringify(requestBody)
       });
 
-      console.log(`Debug - Status da resposta:`, response.status);
-      console.log(`Debug - Status text:`, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log(`Debug - Erro da API:`, errorText);
         throw new Error(`Falha ao atualizar ${field}: ${response.status} ${response.statusText} - ${errorText}`);
       }
 

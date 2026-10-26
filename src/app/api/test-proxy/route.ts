@@ -4,8 +4,6 @@ export async function GET(request: NextRequest) {
   try {
     const BACKEND_URL = process.env.BACKEND_URL || 'http://78.142.242.97:3001';
     
-    console.log('[TEST-PROXY] Testing connection to backend...');
-    console.log('[TEST-PROXY] Backend URL:', BACKEND_URL);
     
     // Testar conexão básica
     const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
@@ -19,9 +17,7 @@ export async function GET(request: NextRequest) {
       }),
     });
     
-    console.log('[TEST-PROXY] Response status:', response.status);
     const responseText = await response.text();
-    console.log('[TEST-PROXY] Response body:', responseText);
     
     return NextResponse.json({
       status: 'proxy test',

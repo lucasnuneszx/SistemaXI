@@ -104,9 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
       const apiUrl = buildApiUrl(API_CONFIG.ENDPOINTS.LOGIN);
-      console.log('🔐 Tentando login em:', apiUrl);
-      console.log('📧 Email:', email);
-      console.log('🔑 Password:', password ? '***' : 'vazio');
       
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -118,7 +115,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ username: email, password }),
       });
 
-      console.log('📡 Resposta do login:', response.status, response.ok, response.statusText);
       
       // Se a resposta não for OK, ler o erro apenas uma vez
       if (!response.ok) {
@@ -126,15 +122,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const errorData = await response.json();
           errorMessage = errorData.detail || errorMessage;
-          console.error('❌ Erro na resposta:', response.status, errorMessage);
+          console.error('Erro na resposta:', response.status, errorMessage);
         } catch {
           try {
             const errorText = await response.text();
             errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
-            console.error('❌ Erro na resposta:', response.status, errorMessage);
+            console.error('Erro na resposta:', response.status, errorMessage);
           } catch {
             errorMessage = `Erro ${response.status}: ${response.statusText}`;
-            console.error('❌ Erro na resposta:', response.status, errorMessage);
+            console.error('Erro na resposta:', response.status, errorMessage);
           }
         }
         return { success: false, message: errorMessage };
@@ -145,25 +141,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data = await response.json();
       } catch (jsonError) {
         const text = await response.text();
-        console.error('❌ Erro ao parsear resposta JSON:', text);
+        console.error('Erro ao parsear resposta JSON:', text);
         return { success: false, message: 'Resposta inválida do servidor' };
       }
 
       const { access_token } = data;
       
       if (!access_token) {
-        console.error('❌ Token não encontrado na resposta:', data);
+        console.error('Token não encontrado na resposta:', data);
         return { success: false, message: 'Token não recebido do servidor' };
       }
 
-      console.log('✅ Token recebido:', access_token.substring(0, 20) + '...');
       
       setToken(access_token);
       localStorage.setItem('authToken', access_token);
 
       // Buscar dados do usuário com timeout
       try {
-        console.log('🔍 Buscando dados do usuário...');
         
         // Criar um AbortController para timeout
         const controller = new AbortController();
@@ -181,11 +175,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
 
         clearTimeout(timeoutId);
-        console.log('👤 Resposta /me:', userResponse.status, userResponse.ok);
 
         if (userResponse.ok) {
           const userData = await userResponse.json();
-          console.log('📋 Dados do usuário:', userData);
           
           // Mapear dados do usuário para o formato esperado
           const mappedUser = {
@@ -201,24 +193,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setor: userData.setor || undefined,
           };
           
-          console.log('👤 Usuário mapeado:', mappedUser);
           setUser(mappedUser);
           
           // Redirecionar para dashboard após login bem-sucedido
-          console.log('🚀 Redirecionando para dashboard...');
           // Usar window.location.href para garantir redirecionamento completo
           // Isso força uma recarga completa da página e evita problemas com ProtectedRoute
           window.location.href = '/dashboard';
         } else {
           const errorText = await userResponse.text();
-          console.error('❌ Erro ao buscar dados do usuário:', userResponse.status, errorText);
+          console.error('Erro ao buscar dados do usuário:', userResponse.status, errorText);
           // Limpar token se houver erro
           localStorage.removeItem('authToken');
           setToken(null);
           return { success: false, message: `Erro ao carregar dados do usuário: ${userResponse.status}` };
         }
       } catch (userError: any) {
-        console.error('❌ Erro ao buscar dados do usuário:', userError);
+        console.error('Erro ao buscar dados do usuário:', userError);
         // Limpar token se houver erro
         localStorage.removeItem('authToken');
         setToken(null);

@@ -30,7 +30,6 @@ const Navbar = () => {
 
   const handleSettingsClick = () => {
     // Navegação para configurações (implementar futuramente)
-    console.log("Navegando para configurações...");
   };
 
   const handleLogout = () => {

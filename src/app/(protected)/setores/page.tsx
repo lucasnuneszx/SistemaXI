@@ -89,7 +89,6 @@ export default function SetoresPage() {
       setError(null); // Limpar erro anterior
       
       try {
-        console.log('🔍 Buscando setores com token:', token.substring(0, 20) + '...');
         
         const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.SECTORS)}`, {
           method: 'GET',
@@ -101,17 +100,15 @@ export default function SetoresPage() {
           credentials: 'omit',
         });
 
-        console.log('📡 Resposta setores:', response.status, response.statusText);
 
         if (!response.ok) {
           throw new Error('Falha ao carregar setores');
         }
 
         const data = await response.json();
-        console.log('✅ Setores carregados:', data.length, 'itens');
         setSetores(data);
       } catch (err) {
-        console.error('❌ Erro ao buscar setores:', err);
+        console.error('Erro ao buscar setores:', err);
         setError('Não foi possível carregar os setores. Por favor, tente novamente mais tarde.');
       } finally {
         setLoading(false);

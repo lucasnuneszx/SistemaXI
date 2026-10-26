@@ -186,7 +186,6 @@ export default function DashboardPage() {
 
       if (projetosResponse.ok) {
         const projetosResponse_data = await projetosResponse.json();
-        console.log('🔍 Projetos carregados:', projetosResponse_data);
         projetosData = Array.isArray(projetosResponse_data) ? projetosResponse_data : [];
         setProjetos(projetosData);
       }
@@ -220,24 +219,20 @@ export default function DashboardPage() {
         
         if (projetosData.length > 0) {
           try {
-            console.log('🔄 Buscando dados consolidados para', projetosData.length, 'projetos');
             
             // Buscar dados consolidados de cada projeto
             const consolidadoPromises = projetosData.map(async (projeto: Projeto) => {
               try {
-                console.log(`📈 Buscando dados consolidados para projeto ${projeto.name} (${projeto.id})`);
                 const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/dashboard/consolidado?projeto_id=${projeto.id}`, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 if (response.ok) {
                   const data = await response.json();
-                  console.log(`✅ Dados consolidados encontrados para ${projeto.name}:`, data);
                   return data;
                 } else {
-                  console.log(`❌ Erro na resposta consolidada para ${projeto.name}:`, response.status);
                 }
               } catch (error) {
-                console.error(`💥 Erro ao buscar dados consolidados do projeto ${projeto.name}:`, error);
+                console.error(`Erro ao buscar dados consolidados do projeto ${projeto.name}:`, error);
               }
               return null;
             });
@@ -266,31 +261,26 @@ export default function DashboardPage() {
               metricasTotaisConsolidadas.roi_medio = (metricasTotaisConsolidadas.total_lucro / metricasTotaisConsolidadas.total_despesas) * 100;
             }
             
-            console.log('📊 Métricas totais consolidadas:', metricasTotaisConsolidadas);
             
             // Buscar dados diários para o gráfico
             const allRelatoriosPromises = projetosData.map(async (projeto: Projeto) => {
               try {
-                console.log(`📈 Buscando relatórios para projeto ${projeto.name} (${projeto.id})`);
                 const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/projeto/${projeto.id}/ultimos?limit=30`, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 if (response.ok) {
                   const data = await response.json();
-                  console.log(`✅ Dados encontrados para ${projeto.name}:`, data.length, 'relatórios');
                   return data;
                 } else {
-                  console.log(`❌ Erro na resposta para ${projeto.name}:`, response.status);
                 }
               } catch (error) {
-                console.error(`💥 Erro ao buscar relatórios do projeto ${projeto.name}:`, error);
+                console.error(`Erro ao buscar relatórios do projeto ${projeto.name}:`, error);
               }
               return [];
             });
             
             const allRelatoriosResults = await Promise.all(allRelatoriosPromises);
             const allRelatorios = allRelatoriosResults.flat();
-            console.log('📊 Total de relatórios encontrados:', allRelatorios.length);
             
             // Agrupar dados por data
             const groupedByDate: {[key: string]: {registros: number, depositos: number, leads: number, ftd: number}} = {};
@@ -328,12 +318,10 @@ export default function DashboardPage() {
                 return dateA.getTime() - dateB.getTime();
               });
               
-            console.log('📊 Dados diários agregados finais:', dadosDiariosGerais);
           } catch (error) {
-            console.error('💥 Erro ao buscar dados diários:', error);
+            console.error('Erro ao buscar dados diários:', error);
           }
         } else {
-          console.log('⚠️ Nenhum projeto encontrado para buscar dados diários');
         }
         
         setDashboardData({
@@ -1203,7 +1191,6 @@ export default function DashboardPage() {
             Dashboard Geral
           </button>
           {projetos.map((projeto) => {
-            console.log('🎯 Renderizando tab para projeto:', projeto);
             return (
               <button
                 key={projeto.id}

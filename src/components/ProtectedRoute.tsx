@@ -15,14 +15,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     // Se não está carregando e não tem token nem usuário, redirecionar para login
     if (!loading && !token && !user) {
-      console.log('🔒 Usuário não autenticado, redirecionando para login...');
       router.push('/login');
       return;
     }
 
     // Se tem token mas não tem usuário, algo deu errado
     if (!loading && token && !user) {
-      console.log('⚠️ Token existe mas usuário não carregado, removendo token...');
       localStorage.removeItem('authToken');
       router.push('/login');
       return;
@@ -30,7 +28,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     // Se está tudo ok, usuário pode acessar a página
     if (!loading && token && user) {
-      console.log('✅ Usuário autenticado:', user.email);
     }
   }, [user, token, loading, router]);
 

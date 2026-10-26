@@ -440,7 +440,7 @@ export default function NewProjectPage() {
           
           await Promise.all(addUserPromises);
         } catch (err: any) {
-          console.error("❌ Erro ao adicionar usuários ao projeto:", err);
+          console.error("Erro ao adicionar usuários ao projeto:", err);
           // Se houver erro ao adicionar usuários, mostrar aviso mas continuar
           // O projeto já foi criado, então não vamos reverter isso
           toast.warning("Projeto criado, mas alguns usuários não puderam ser adicionados", {

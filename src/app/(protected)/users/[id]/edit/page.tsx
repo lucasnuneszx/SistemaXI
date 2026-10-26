@@ -81,7 +81,6 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
 
         if (setoresResponse.ok) {
           const setoresData = await setoresResponse.json();
-          console.log('Debug - Setores carregados:', setoresData.length, 'setores');
           setSetores(setoresData);
         } else {
           console.error('Erro ao buscar setores:', setoresResponse.status, setoresResponse.statusText);

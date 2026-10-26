@@ -24,7 +24,6 @@ export default function LoginPage() {
   // Se já está autenticado, redirecionar para dashboard
   useEffect(() => {
     if (user && token && !loading) {
-      console.log('✅ Usuário já autenticado, redirecionando...');
       router.push('/dashboard');
     }
   }, [user, token, loading, router]);

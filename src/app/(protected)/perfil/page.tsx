@@ -99,7 +99,6 @@ export default function PerfilPage() {
         // Construir URL corretamente: /v1/users + /me/stats = /v1/users/me/stats
         const endpoint = `${API_CONFIG.ENDPOINTS.USERS}/me/stats`;
         const url = buildApiUrl(endpoint);
-        console.log('🔍 Buscando estatísticas do usuário:', url);
         
         const response = await fetch(url, {
           method: 'GET',
@@ -113,11 +112,10 @@ export default function PerfilPage() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Estatísticas carregadas:', data);
           setStats(data);
         } else {
           const errorText = await response.text().catch(() => 'Erro desconhecido');
-          console.error('❌ Erro ao carregar estatísticas:', response.status, response.statusText, errorText);
+          console.error('Erro ao carregar estatísticas:', response.status, response.statusText, errorText);
           // Se o endpoint não existir (404) ou outro erro, definir stats como vazio
           setStats({
             projects: 0,
@@ -129,7 +127,7 @@ export default function PerfilPage() {
           });
         }
       } catch (error) {
-        console.error('❌ Erro de rede ao carregar estatísticas:', error);
+        console.error('Erro de rede ao carregar estatísticas:', error);
         // Em caso de erro de rede, definir stats como vazio para não quebrar a UI
         setStats({
           projects: 0,

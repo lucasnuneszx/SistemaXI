@@ -119,7 +119,6 @@ function NovaAtividadeContent() {
 
         if (usuariosResponse.ok) {
           const usuariosData = await usuariosResponse.json();
-          console.log('Debug - Usuários carregados:', usuariosData.length);
           setUsuarios(usuariosData);
         } else {
           console.error('Erro ao buscar usuários:', usuariosResponse.status);
@@ -198,7 +197,6 @@ function NovaAtividadeContent() {
         transformedData.setor_id = values.setorId;
       }
 
-      console.log('Debug - Enviando dados:', transformedData);
 
       const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES), {
         method: 'POST',

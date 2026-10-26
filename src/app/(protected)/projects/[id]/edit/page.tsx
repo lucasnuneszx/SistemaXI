@@ -297,7 +297,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         status,
       };
 
-      console.log('Enviando dados de atualização:', projectData);
 
       const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1)}/${resolvedParams.id}`, {
         method: "PUT",

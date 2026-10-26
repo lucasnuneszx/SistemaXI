@@ -77,9 +77,6 @@ export default function NewRelatorioPage() {
     const fetchDados = async () => {
       setLoadingAtividades(true);
       try {
-        console.log('🔍 Iniciando busca de dados...');
-        console.log('📝 Project ID:', projectId);
-        console.log('🔑 Token:', token ? token.substring(0, 20) + '...' : 'Não encontrado');
 
         // Buscar projeto
         const projetoResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1)}/${projectId}`, {
@@ -89,18 +86,15 @@ export default function NewRelatorioPage() {
           },
         });
 
-        console.log('📊 Resposta projeto:', projetoResponse.status);
         if (projetoResponse.ok) {
           const projetoData = await projetoResponse.json();
-          console.log('✅ Projeto carregado:', projetoData.name);
           setProjeto(projetoData);
         } else {
-          console.error('❌ Erro ao buscar projeto:', projetoResponse.status, projetoResponse.statusText);
+          console.error('Erro ao buscar projeto:', projetoResponse.status, projetoResponse.statusText);
         }
 
         // Buscar atividades do projeto
         const atividadesUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES)}/projeto/${projectId}`;
-        console.log('🎯 Buscando atividades em:', atividadesUrl);
         
         const atividadesResponse = await fetch(atividadesUrl, {
           headers: {
@@ -109,20 +103,17 @@ export default function NewRelatorioPage() {
           },
         });
 
-        console.log('📋 Resposta atividades:', atividadesResponse.status);
         if (atividadesResponse.ok) {
           const atividadesData = await atividadesResponse.json();
-          console.log('✅ Atividades carregadas:', atividadesData.length, 'itens');
-          console.log('📊 Atividades:', atividadesData);
           setAtividades(atividadesData);
         } else {
           const errorText = await atividadesResponse.text();
-          console.error('❌ Erro ao buscar atividades:', atividadesResponse.status, atividadesResponse.statusText);
-          console.error('❌ Detalhes do erro:', errorText);
+          console.error('Erro ao buscar atividades:', atividadesResponse.status, atividadesResponse.statusText);
+          console.error('Detalhes do erro:', errorText);
         }
 
       } catch (err) {
-        console.error('💥 Erro ao carregar dados:', err);
+        console.error('Erro ao carregar dados:', err);
       } finally {
         setLoadingAtividades(false);
       }
