@@ -16,7 +16,7 @@ from app.models import (
     FinanceTransaction, Notificacao
 )
 
-def verificar_tabelas():
+def check_tables():
     """Verifica se todas as tabelas foram criadas"""
     print("Verificando tabelas no banco de dados...")
     print()
@@ -87,5 +87,5 @@ def verificar_tabelas():
     return todas_ok
 
 if __name__ == "__main__":
-    verificar_tabelas()
+    check_tables()
 

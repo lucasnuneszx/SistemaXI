@@ -17,7 +17,7 @@ import { useTheme } from "next-themes";
 import { SidebarTrigger } from "./ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import NotificationCenterBackend from "./notifications/NotificationCenterBackend";
+import NotificationCenter from "./notifications/NotificationCenter";
 
 const Navbar = () => {
   const { setTheme } = useTheme();
@@ -70,7 +70,7 @@ const Navbar = () => {
         </Link>
         
         {/* NOTIFICATION CENTER */}
-        <NotificationCenterBackend />
+        <NotificationCenter />
         
         {/* THEME MENU */}
         <DropdownMenu>

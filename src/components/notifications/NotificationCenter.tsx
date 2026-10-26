@@ -33,7 +33,7 @@ interface NotificationBackend {
   read_at?: string;
 }
 
-export default function NotificationCenterBackend() {
+export default function NotificationCenter() {
   const { user, token } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'all' | 'nudges' | 'info'>('all');
