@@ -53,7 +53,6 @@ export default function ProjectsPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
 
-  // Função para buscar projetos (extraída para reutilização)
   const fetchProjects = useCallback(async () => {
     if (!token || token.length < 10) {
       return;
@@ -77,7 +76,6 @@ export default function ProjectsPage() {
 
       const data = await response.json();
       
-      // Usar dados da API se for array, caso contrário array vazio
       setProjects(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao buscar projetos:", error);
@@ -98,7 +96,6 @@ export default function ProjectsPage() {
     const projectToDelete = projects.find(p => p.id === id);
     const projectName = projectToDelete?.name || projectToDelete?.title || 'este projeto';
     
-    // Mostrar toast de confirmação
     toast.warning(`Excluir "${projectName}"?`, {
       description: "Esta ação não pode ser desfeita.",
       action: {
@@ -127,14 +124,12 @@ export default function ProjectsPage() {
                 errorMessage = `Erro ${response.status}: ${response.statusText}`;
               }
               
-              // Mostrar toast de erro
               toast.error("Erro ao excluir projeto", {
                 description: errorMessage,
               });
               return;
             }
 
-            // Atualizar a lista automaticamente removendo o projeto excluído
             setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
             
             // Recarregar lista completa para garantir sincronização

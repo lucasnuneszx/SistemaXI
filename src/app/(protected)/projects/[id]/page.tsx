@@ -337,7 +337,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     return <Badge className={`${colorClass} ${textColor} px-2 py-1 text-xs font-medium`}>{status || "Indefinido"}</Badge>;
   };
 
-  // Funções para calcular estatísticas das atividades
   const getActivityStats = () => {
     if (!project.atividades) return {
       total: 0,

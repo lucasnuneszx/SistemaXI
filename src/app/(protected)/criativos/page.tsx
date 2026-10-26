@@ -179,13 +179,11 @@ export default function CriativosPage() {
     fetchData();
   }, [token]);
 
-  // Handle modal success
   const handleModalSuccess = () => {
     setIsModalOpen(false);
     fetchData(); // Refresh data
   };
 
-  // Handle download
   const handleDownload = async (criativo: Criativo) => {
     if (!token) return;
     
@@ -199,7 +197,6 @@ export default function CriativosPage() {
 
       if (response.ok) {
         const data = await response.json();
-        // Abrir URL de download em nova aba
         window.open(data.download_url, '_blank');
       } else {
         const errorData = await response.json();
@@ -211,7 +208,6 @@ export default function CriativosPage() {
     }
   };
 
-  // Handle status change
   const handleStatusChange = async (criativo: Criativo, newStatus: string) => {
     if (!token) return;
     
@@ -238,7 +234,6 @@ export default function CriativosPage() {
     }
   };
 
-  // Handle delete
   const handleDelete = async (criativo: Criativo) => {
     if (!token) return;
     

@@ -50,7 +50,6 @@ function NovoClienteContent() {
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [allLeads, setAllLeads] = useState<Lead[]>([]); // Estado local para todos os leads
 
-  // Carregar leads da API ao montar o componente
   useEffect(() => {
     if (!token) return;
 
@@ -73,7 +72,6 @@ function NovoClienteContent() {
 
         const leadsData: any[] = await response.json();
         
-        // Converter leads da API para o formato esperado
         const formattedLeads: Lead[] = leadsData.map((lead: any) => ({
           id: String(lead.id),
           nome: lead.nome,
@@ -85,7 +83,7 @@ function NovoClienteContent() {
           columnId: lead.column_id ? String(lead.column_id) : undefined,
         }));
 
-        // IMPORTANTE: Salvar TODOS os leads no estado local para exibir na sidebar
+        // Salvar TODOS os leads no estado local para exibir na sidebar
         // Independente de terem columnId ou não
         setAllLeads(formattedLeads);
 
@@ -102,7 +100,6 @@ function NovoClienteContent() {
           }
         });
 
-        // Atualizar estado do contexto
         dispatch({ type: 'SET_BACKLOG', payload: backlogLeads });
         
         // Se houver colunas no estado, atualizar os leads delas

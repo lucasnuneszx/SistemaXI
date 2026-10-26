@@ -41,16 +41,13 @@ export default function NewProjectPage() {
 
   // Prevenir reenvio automático do formulário após refresh
   useEffect(() => {
-    // Limpar qualquer estado de submissão ao montar o componente
     setIsSubmitting(false);
     setLoading(false);
     
-    // Limpar qualquer flag de submissão pendente do sessionStorage
     const pendingSubmission = sessionStorage.getItem('project_submission_pending');
     if (pendingSubmission) {
       try {
         const submissionData = JSON.parse(pendingSubmission);
-        // Verificar se a submissão é muito antiga (mais de 5 minutos)
         const isExpired = Date.now() - submissionData.timestamp > 5 * 60 * 1000;
         if (isExpired) {
           sessionStorage.removeItem('project_submission_pending');
@@ -69,7 +66,6 @@ export default function NewProjectPage() {
     
     // Prevenir comportamento padrão de reenvio do navegador
     const handleBeforeUnload = () => {
-      // Limpar flag ao sair da página
       sessionStorage.removeItem('project_submission_pending');
     };
     
@@ -121,34 +117,27 @@ export default function NewProjectPage() {
     fetchAllUsers();
   }, [token]);
 
-  // Função para adicionar usuário à lista de selecionados
   const addUserToSelection = (userId: string) => {
     try {
-      // Validar userId
       if (!userId || typeof userId !== 'string') {
         console.error('ID de usuário inválido:', userId);
         toast.error("Erro ao adicionar usuário", { description: "ID de usuário inválido" });
         return;
       }
 
-      // Verificar se já está selecionado
       if (selectedUsers.includes(userId)) {
         return; // Já está selecionado, não fazer nada
       }
 
-      // Adicionar à lista de selecionados
       setSelectedUsers(prev => {
-        // Verificar novamente para evitar duplicatas
         if (prev.includes(userId)) {
           return prev;
         }
         return [...prev, userId];
       });
       
-      // Ativar animação
       setJustAddedUser(userId);
       
-      // Remover animação após 2 segundos
       setTimeout(() => {
         setJustAddedUser(null);
       }, 2000);
@@ -164,7 +153,6 @@ export default function NewProjectPage() {
     }
   };
 
-  // Função para remover usuário da lista de selecionados
   const removeUserFromSelection = (userId: string) => {
     try {
       setSelectedUsers(prev => prev.filter(id => id !== userId));
@@ -180,7 +168,6 @@ export default function NewProjectPage() {
     }
   };
 
-  // Verificar se usuário está selecionado
   const isUserSelected = (userId: string) => {
     return selectedUsers.includes(userId);
   };
@@ -194,15 +181,12 @@ export default function NewProjectPage() {
       return;
     }
     
-    // Verificar se há uma submissão pendente (evitar reenvio após refresh)
     const pendingSubmission = sessionStorage.getItem('project_submission_pending');
     if (pendingSubmission) {
       try {
         const submissionData = JSON.parse(pendingSubmission);
-        // Verificar se a submissão é muito antiga (mais de 5 minutos)
         const isExpired = Date.now() - submissionData.timestamp > 5 * 60 * 1000;
         if (!isExpired) {
-          // Limpar a flag e não permitir submissão
           sessionStorage.removeItem('project_submission_pending');
           setError("Uma submissão anterior foi detectada. Por favor, preencha o formulário novamente.");
           setLoading(false);
@@ -224,12 +208,10 @@ export default function NewProjectPage() {
       }
     }
     
-    // Verificar se já está submetendo (proteção adicional)
     if (isSubmitting || loading) {
       return;
     }
     
-    // Marcar que há uma submissão em andamento (com timestamp para expiração)
     const submissionData = {
       timestamp: Date.now(),
       projectName: name
@@ -241,7 +223,6 @@ export default function NewProjectPage() {
     setError(null);
 
     try {
-      // Validações básicas
       if (!name || !name.trim()) {
         setError("Nome do projeto é obrigatório");
         setLoading(false);
@@ -263,7 +244,6 @@ export default function NewProjectPage() {
         return;
       }
 
-      // Validar formato da data
       try {
         new Date(startDate);
       } catch (e) {
@@ -291,7 +271,6 @@ export default function NewProjectPage() {
         }
       }
 
-      // Preparar dados do projeto
       const projectData: any = {
         name: name.trim(),
         description: description?.trim() || null,
@@ -300,24 +279,20 @@ export default function NewProjectPage() {
         status: status || "planning",
       };
 
-      // Adicionar endDate apenas se fornecido
       if (endDate && endDate.trim()) {
         projectData.endDate = new Date(endDate).toISOString();
       }
 
-      // Verificar se o token está disponível
       if (!token) {
         throw new Error("Token de autenticação não encontrado. Por favor, faça login novamente.");
       }
 
       const apiUrl = buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1);
       
-      // Verificar se a URL está correta
       if (!apiUrl || !apiUrl.includes('http')) {
         throw new Error("URL da API inválida. Verifique a configuração.");
       }
 
-      // Criar um AbortController para timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos de timeout
 
@@ -339,12 +314,10 @@ export default function NewProjectPage() {
         // Erro de rede (Failed to fetch)
         console.error("Erro de rede ao criar projeto:", fetchError.message);
         
-        // Verificar se foi abortado por timeout
         if (fetchError.name === 'AbortError') {
           throw new Error("A requisição demorou muito para responder. Verifique se o servidor está acessível.");
         }
         
-        // Verificar se é erro de CORS
         if (fetchError.message?.includes('CORS') || fetchError.message?.includes('cors')) {
           throw new Error("Erro de CORS. Verifique a configuração do servidor.");
         }
@@ -357,9 +330,7 @@ export default function NewProjectPage() {
         );
       }
 
-      // Verificar se a resposta foi bem-sucedida ANTES de processar
       if (!response.ok) {
-        // Tentar ler a mensagem de erro do servidor
         let errorMessage = "Erro ao criar projeto";
         try {
           const errorData = await response.json();
@@ -369,7 +340,6 @@ export default function NewProjectPage() {
           errorMessage = `Erro ao criar projeto (${response.status}: ${response.statusText})`;
         }
         
-        // Limpar flag de submissão pendente em caso de erro
         sessionStorage.removeItem('project_submission_pending');
         
         console.error('Erro ao criar projeto:', response.status, errorMessage);
@@ -377,7 +347,7 @@ export default function NewProjectPage() {
         setLoading(false);
         setIsSubmitting(false);
         
-        // IMPORTANTE: Retornar aqui para NÃO criar o projeto
+        // Retornar aqui para NÃO criar o projeto
         return;
       }
 
@@ -395,7 +365,6 @@ export default function NewProjectPage() {
         return;
       }
 
-      // Verificar se o projeto foi realmente criado
       if (!createdProject || !createdProject.id) {
         console.error('Erro: Projeto criado mas sem ID válido');
         sessionStorage.removeItem('project_submission_pending');
@@ -407,7 +376,6 @@ export default function NewProjectPage() {
       
       const projectId = String(createdProject.id);
       
-      // Adicionar usuários selecionados ao projeto
       if (selectedUsers.length > 0) {
         try {
           
@@ -450,15 +418,13 @@ export default function NewProjectPage() {
         }
       }
       
-      // IMPORTANTE: Só chegar aqui se o projeto foi criado com sucesso
+      // Só chegar aqui se o projeto foi criado com sucesso
       // Se houver qualquer erro antes disso, o código já terá retornado
       
-      // Limpar flag de submissão pendente
       sessionStorage.removeItem('project_submission_pending');
       
       toast.success(`Projeto "${name}" criado com sucesso!`);
       
-      // Limpar formulário antes de redirecionar
       setName("");
       setDescription("");
       setStartDate("");
@@ -469,10 +435,8 @@ export default function NewProjectPage() {
       setIsSubmitting(false);
       setLoading(false);
       
-      // Redirecionar apenas se tudo estiver OK
       router.push(`/projects/${projectId}`);
     } catch (error: any) {
-      // Limpar flag de submissão pendente em caso de erro
       sessionStorage.removeItem('project_submission_pending');
       
       console.error("Error creating project:", error);

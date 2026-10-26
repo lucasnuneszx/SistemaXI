@@ -90,7 +90,6 @@ export default function PerfilPage() {
     resolver: zodResolver(passwordSchema),
   });
 
-  // Carregar estatísticas do usuário
   useEffect(() => {
     const fetchStats = async () => {
       if (!token) return;
@@ -145,7 +144,6 @@ export default function PerfilPage() {
     fetchStats();
   }, [token]);
 
-  // Atualizar formulário quando o usuário mudar
   useEffect(() => {
     if (user) {
       reset({
@@ -169,7 +167,6 @@ export default function PerfilPage() {
     }
   }, [user, reset]);
 
-  // Buscar dados atualizados do usuário ao montar o componente
   useEffect(() => {
     const fetchUserData = async () => {
       if (!token) return;
@@ -187,13 +184,11 @@ export default function PerfilPage() {
 
         if (response.ok) {
           const userData = await response.json();
-          // Atualizar contexto com dados atualizados (incluindo presigned URL da foto)
           updateUser({
             ...userData,
             id: String(userData.id),
           });
           
-          // Atualizar preview da imagem se houver
           if (userData.foto_perfil && userData.foto_perfil.trim() !== '') {
             if (userData.foto_perfil.startsWith('http://') || userData.foto_perfil.startsWith('https://')) {
               setPreviewImage(userData.foto_perfil);
@@ -208,7 +203,6 @@ export default function PerfilPage() {
     fetchUserData();
   }, [token, updateUser]);
 
-  // Função para obter iniciais do nome
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -261,12 +255,10 @@ export default function PerfilPage() {
       }
 
       const updatedUser = await response.json();
-      // Atualizar contexto com todos os dados do usuário
       updateUser({
         ...updatedUser,
         id: String(updatedUser.id),
       });
-      // Atualizar preview da imagem
       if (updatedUser.foto_perfil) {
         if (updatedUser.foto_perfil.startsWith('http')) {
           setPreviewImage(updatedUser.foto_perfil);
@@ -288,7 +280,6 @@ export default function PerfilPage() {
     }
   };
 
-  // Atualizar perfil
   const onSubmit = async (data: ProfileFormData) => {
     if (!token) {
       setErrorMessage('Token não disponível');
@@ -322,7 +313,6 @@ export default function PerfilPage() {
       }
 
       const updatedUser = await response.json();
-      // Atualizar contexto com todos os dados do usuário
       updateUser({
         ...updatedUser,
         id: String(updatedUser.id),

@@ -91,12 +91,10 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
     },
   });
 
-  // Buscar dados para os selects e a atividade atual
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Buscar a atividade
         const atividadeResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES_OLD)}/${resolvedParams.id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -109,7 +107,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
 
         const atividadeData = await atividadeResponse.json();
         
-        // Formatar as datas para o formato de input date
         const formatDateForInput = (dateString?: string) => {
           if (!dateString) return "";
           const date = new Date(dateString);
@@ -130,7 +127,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
           setorId: atividadeData.setorId || "",
         });
 
-        // Buscar projetos
         const projetosResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -142,7 +138,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
           setProjetos(projetosData);
         }
 
-        // Buscar usuários
         const usuariosResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.USERS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -154,7 +149,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
           setUsuarios(usuariosData);
         }
 
-        // Buscar setores
         const setoresResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.SECTORS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -182,7 +176,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
     setError(null);
 
     try {
-      // Remover campos vazios
       Object.keys(values).forEach(key => {
         if (values[key as keyof typeof values] === "") {
           delete values[key as keyof typeof values];
@@ -203,7 +196,6 @@ export default function EditarAtividadePage({ params }: { params: Promise<{ id: 
         throw new Error(errorData.error || 'Erro ao atualizar atividade');
       }
 
-      // Redirecionar para a lista de atividades após sucesso
       router.push('/atividades');
     } catch (err) {
       console.error('Erro ao atualizar atividade:', err);

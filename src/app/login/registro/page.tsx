@@ -25,7 +25,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     
-    // Validar senhas
     if (password !== confirmPassword) {
       setError('As senhas não coincidem');
       return;

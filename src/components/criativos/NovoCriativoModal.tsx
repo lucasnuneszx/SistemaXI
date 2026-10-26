@@ -37,7 +37,6 @@ export function NovoCriativoModal({ isOpen, onClose, onSuccess }: NovoCriativoMo
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Check if user is admin
   const isAdmin = user?.is_admin === true;
   
   // Form data comum para todos os arquivos
@@ -46,7 +45,6 @@ export function NovoCriativoModal({ isOpen, onClose, onSuccess }: NovoCriativoMo
     prazo: ""
   });
 
-  // Carregar projetos quando o modal abrir (apenas para admins)
   useEffect(() => {
     if (isOpen && token && isAdmin) {
       fetchProjetos();
@@ -82,7 +80,6 @@ export function NovoCriativoModal({ isOpen, onClose, onSuccess }: NovoCriativoMo
     let hasError = false;
 
     for (const file of files) {
-      // Verificar tamanho do arquivo (máximo 50MB)
       if (file.size > 50 * 1024 * 1024) {
         setError(`Arquivo "${file.name}" muito grande. Tamanho máximo: 50MB`);
         hasError = true;
@@ -181,7 +178,6 @@ export function NovoCriativoModal({ isOpen, onClose, onSuccess }: NovoCriativoMo
       return;
     }
 
-    // Verificar se todos os títulos estão preenchidos
     const filesWithoutTitle = selectedFiles.filter(f => !f.titulo.trim());
     if (filesWithoutTitle.length > 0) {
       setError("Todos os arquivos devem ter um título");

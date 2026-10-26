@@ -86,7 +86,6 @@ const generateMockReceivables = (): Transaction[] => {
 
 const STORAGE_KEY_RECEIVABLE = 'finance_receivable_transactions';
 
-// Carregar transações do localStorage ou usar mock
 const loadReceivableTransactions = (): Transaction[] => {
   if (typeof window === 'undefined') return generateMockReceivables();
   
@@ -94,7 +93,6 @@ const loadReceivableTransactions = (): Transaction[] => {
     const stored = localStorage.getItem(STORAGE_KEY_RECEIVABLE);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Converter datas de string para Date
       return parsed.map((t: any) => ({
         ...t,
         dueDate: new Date(t.dueDate),
@@ -113,7 +111,6 @@ const loadReceivableTransactions = (): Transaction[] => {
   return mockData;
 };
 
-// Salvar transações no localStorage
 const saveReceivableTransactions = (transactions: Transaction[]) => {
   if (typeof window === 'undefined') return;
   
@@ -134,7 +131,6 @@ export default function ContasAReceberPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
-  // Carregar transações apenas uma vez ao montar
   useEffect(() => {
     if (!isLoaded) {
       const loaded = loadReceivableTransactions();
@@ -143,7 +139,6 @@ export default function ContasAReceberPage() {
     }
   }, [isLoaded]);
 
-  // Salvar sempre que transactions mudar
   useEffect(() => {
     if (isLoaded) {
       saveReceivableTransactions(transactions);
@@ -223,13 +218,11 @@ export default function ContasAReceberPage() {
     };
 
     if (editingTransaction) {
-      // Atualizar transação existente - força recálculo dos KPIs
       setTransactions((prev) => {
         const updated = prev.map((t) => (t.id === editingTransaction.id ? newTransaction : t));
         return updated;
       });
     } else {
-      // Adicionar nova transação - força recálculo dos KPIs
       setTransactions((prev) => {
         const updated = [...prev, newTransaction];
         return updated;

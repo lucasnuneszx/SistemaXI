@@ -71,7 +71,6 @@ async function handleRequest(
     const targetUrl = `${BACKEND_URL}/${path}${searchParams ? `?${searchParams}` : ''}`;
 
 
-    // Preparar headers
     const headers = new Headers();
     
     // Copiar headers importantes da requisição original
@@ -88,7 +87,6 @@ async function handleRequest(
       headers.set('content-type', 'application/json');
     }
 
-    // Preparar body se necessário
     let body = undefined;
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
@@ -114,13 +112,11 @@ async function handleRequest(
     } else {
     }
     
-    // Criar resposta com headers CORS
     const nextResponse = new NextResponse(responseData, {
       status: response.status,
       statusText: response.statusText,
     });
 
-    // Adicionar headers CORS
     nextResponse.headers.set('Access-Control-Allow-Origin', '*');
     nextResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     nextResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');

@@ -71,7 +71,6 @@ export default function RelatorioViewPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Buscar relatório
         const relatorioResponse = await fetch(
           `${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/${relatorioId}`,
           {
@@ -89,7 +88,6 @@ export default function RelatorioViewPage() {
         const relatorioData = await relatorioResponse.json();
         setRelatorio(relatorioData);
 
-        // Buscar projeto
         const projetoResponse = await fetch(
           `${buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1)}/${projectId}`,
           {
@@ -105,7 +103,6 @@ export default function RelatorioViewPage() {
           setProjeto(projetoData);
         }
 
-        // Buscar atividades se tiver IDs
         if (relatorioData.atividades_realizadas_ids && relatorioData.atividades_realizadas_ids.length > 0) {
           const atividadesResponse = await fetch(
             `${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES)}/projeto/${projectId}`,

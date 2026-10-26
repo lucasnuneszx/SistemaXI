@@ -77,7 +77,6 @@ export default function SetoresPage() {
     },
   });
 
-  // Buscar setores
   useEffect(() => {
     // Evitar chamadas se não há token válido
     if (!token || token.length < 10) {
@@ -142,7 +141,6 @@ export default function SetoresPage() {
         throw new Error(errorData.error || 'Erro ao salvar setor');
       }
 
-      // Atualizar a lista de setores
       const updatedResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.SECTORS)}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -194,7 +192,6 @@ export default function SetoresPage() {
         throw new Error(errorData.error || 'Erro ao excluir setor');
       }
 
-      // Atualizar a lista retirando o setor excluído
       setSetores(setores.filter(setor => setor.id !== id));
     } catch (err) {
       console.error('Erro ao excluir setor:', err);
@@ -202,7 +199,6 @@ export default function SetoresPage() {
     }
   };
 
-  // Abrir formulário para novo setor
   const handleAddNew = () => {
     setCurrentSetor(null);
     form.reset({

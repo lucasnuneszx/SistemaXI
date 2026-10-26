@@ -76,7 +76,6 @@ export default function EditPropostaPage({ params }: { params: Promise<{ id: str
     },
   });
 
-  // Carregar proposta e dados relacionados
   useEffect(() => {
     if (!token) return;
 
@@ -113,7 +112,6 @@ export default function EditPropostaPage({ params }: { params: Promise<{ id: str
           }),
         ]);
 
-        // Carregar proposta
         if (propostaResponse.ok) {
           const propostaData = await propostaResponse.json();
           reset({
@@ -130,7 +128,6 @@ export default function EditPropostaPage({ params }: { params: Promise<{ id: str
           setError('Proposta não encontrada');
         }
 
-        // Carregar clientes
         if (clientesResponse.ok) {
           const clientesData = await clientesResponse.json();
           const formattedClientes = Array.isArray(clientesData) 
@@ -145,7 +142,6 @@ export default function EditPropostaPage({ params }: { params: Promise<{ id: str
           console.error('Erro ao carregar clientes:', clientesResponse.status, errorData);
         }
 
-        // Carregar usuários
         if (usersResponse.ok) {
           const usersData = await usersResponse.json();
           setUsers(usersData.map((u: any) => ({
@@ -170,10 +166,8 @@ export default function EditPropostaPage({ params }: { params: Promise<{ id: str
     setError(null);
 
     try {
-      // Converter valor para número
       const valorNum = parseFloat(data.valor.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
 
-      // Preparar dados para API
       const propostaData = {
         titulo: data.titulo,
         descricao: data.descricao || null,

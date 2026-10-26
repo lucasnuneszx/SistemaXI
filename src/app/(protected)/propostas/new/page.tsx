@@ -73,7 +73,6 @@ export default function NovaPropostaPage() {
     },
   });
 
-  // Carregar clientes e usuários
   useEffect(() => {
     if (!token) return;
 
@@ -126,10 +125,8 @@ export default function NovaPropostaPage() {
     setError(null);
 
     try {
-      // Converter valor para número
       const valorNum = parseFloat(data.valor.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
 
-      // Preparar dados para API
       const propostaData = {
         titulo: data.titulo,
         descricao: data.descricao || null,

@@ -12,7 +12,6 @@ import { Proposta } from '@/types/proposta';
 import { useAuth } from '@/context/AuthContext';
 import { buildApiUrl, API_CONFIG } from '@/config/api';
 
-// Função para verificar se é um UUID válido
 const isValidUUID = (str: string): boolean => {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
@@ -26,7 +25,6 @@ export default function PropostasPage() {
   const [selectedProposta, setSelectedProposta] = useState<Proposta | null>(null);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
 
-  // Carregar propostas da API
   useEffect(() => {
     if (!token) {
       setLoading(false);
@@ -100,7 +98,6 @@ export default function PropostasPage() {
     const [removed] = newPropostas.splice(source.index, 1);
     newPropostas.splice(destination.index, 0, removed);
 
-    // Atualizar ordem
     const updatedPropostas = newPropostas.map((p, index) => ({
       ...p,
       ordem: index,
@@ -109,7 +106,6 @@ export default function PropostasPage() {
 
     setPropostas(updatedPropostas);
 
-    // Salvar nova ordem na API
     if (isValidUUID(draggableId)) {
       try {
         await fetch(buildApiUrl(`${API_CONFIG.ENDPOINTS.PROPOSTAS}/${draggableId}`), {
@@ -192,7 +188,6 @@ export default function PropostasPage() {
     }
   };
 
-  // Atualizar progresso
   const handleUpdateProgress = async (propostaId: string, progresso: number) => {
     if (!isValidUUID(propostaId)) {
       setPropostas(prev => prev.map(p => p.id === propostaId ? { ...p, progresso } : p));
@@ -220,12 +215,10 @@ export default function PropostasPage() {
   };
 
   const handleEdit = (proposta: Proposta) => {
-    // Redirecionar para página de edição ou abrir modal
     router.push(`/propostas/${proposta.id}/edit`);
   };
 
   const handleViewDetails = (proposta: Proposta) => {
-    // Abrir modal de detalhes ou redirecionar
     setSelectedProposta(proposta);
   };
 

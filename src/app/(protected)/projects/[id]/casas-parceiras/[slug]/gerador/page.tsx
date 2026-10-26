@@ -46,11 +46,9 @@ export default function GeradorLinksPage({ params }: { params: Promise<{ id: str
   const [linkFinal, setLinkFinal] = useState("");
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
 
-  // Estados para seleção de canal
   const [canalSelecionado, setCanalSelecionado] = useState<string>("");
   const [subcanalSelecionado, setSubcanalSelecionado] = useState<string>("");
   
-  // Estados para override (avançado)
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [overrideUtmContent, setOverrideUtmContent] = useState("");
   const [overrideUtmTerm, setOverrideUtmTerm] = useState("");
@@ -84,7 +82,6 @@ export default function GeradorLinksPage({ params }: { params: Promise<{ id: str
   }, []);
 
   useEffect(() => {
-    // Resetar subcanal quando trocar canal
     setSubcanalSelecionado("");
   }, [canalSelecionado]);
 

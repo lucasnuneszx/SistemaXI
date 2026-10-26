@@ -10,7 +10,6 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Usar um valor padrão para o sidebar
   const defaultOpen = true;
   
   return (

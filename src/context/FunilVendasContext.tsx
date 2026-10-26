@@ -27,7 +27,6 @@ function funilVendasReducer(
       const newColumns = [...state.columns];
       const newBacklog = [...state.backlog];
 
-      // Remover lead da origem
       let leadToMove: Lead | undefined;
       if (fromColumnId === null) {
         // Movendo do backlog
@@ -48,7 +47,6 @@ function funilVendasReducer(
 
       if (!leadToMove) return state;
 
-      // Adicionar lead ao destino
       if (toColumnId === 'backlog') {
         newBacklog.splice(newIndex, 0, { ...leadToMove, columnId: undefined });
       } else {

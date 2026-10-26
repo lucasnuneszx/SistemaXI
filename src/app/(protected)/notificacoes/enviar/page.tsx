@@ -50,15 +50,12 @@ export default function EnviarNotificacaoPage() {
   const [contexto_nome, setContextoNome] = useState<string>('');
   const [action_url, setActionUrl] = useState<string>('');
 
-  // Verificar permissão
   useEffect(() => {
     if (!user) return;
     
-    // Verificar se é admin ou gestor de projeto
     const isAdmin = user.is_admin || user.role === 'admin';
     
     if (!isAdmin) {
-      // Verificar se é gestor de projeto (owner de algum projeto)
       const checkProjectManager = async () => {
         if (!token) return;
         
@@ -91,7 +88,6 @@ export default function EnviarNotificacaoPage() {
     }
   }, [user, token, router]);
 
-  // Carregar usuários
   useEffect(() => {
     if (!token) return;
 
@@ -193,7 +189,6 @@ export default function EnviarNotificacaoPage() {
 
       toast.success(`Notificação enviada para ${selectedUsers.length} usuário(s)!`);
       
-      // Limpar formulário
       setTitulo('');
       setMensagem('');
       setContextoTipo('');

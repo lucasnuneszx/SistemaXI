@@ -45,11 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Verificar se há token salvo no localStorage
     const savedToken = localStorage.getItem('authToken');
     if (savedToken) {
       setToken(savedToken);
-      // Verificar se o token é válido
       verifyToken(savedToken);
     } else {
       setLoading(false);
@@ -70,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const userData = await response.json();
-        // Mapear dados do usuário para o formato esperado
         const mappedUser = {
           id: String(userData.id),
           name: userData.name || userData.username || 'Usuário',
@@ -156,10 +153,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(access_token);
       localStorage.setItem('authToken', access_token);
 
-      // Buscar dados do usuário com timeout
       try {
         
-        // Criar um AbortController para timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos
         
@@ -179,7 +174,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           
-          // Mapear dados do usuário para o formato esperado
           const mappedUser = {
             id: String(userData.id),
             name: userData.name || userData.username || 'Usuário',
@@ -202,14 +196,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           const errorText = await userResponse.text();
           console.error('Erro ao buscar dados do usuário:', userResponse.status, errorText);
-          // Limpar token se houver erro
           localStorage.removeItem('authToken');
           setToken(null);
           return { success: false, message: `Erro ao carregar dados do usuário: ${userResponse.status}` };
         }
       } catch (userError: any) {
         console.error('Erro ao buscar dados do usuário:', userError);
-        // Limpar token se houver erro
         localStorage.removeItem('authToken');
         setToken(null);
         
@@ -244,7 +236,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(access_token);
         localStorage.setItem('authToken', access_token);
 
-        // Buscar dados do usuário
         try {
           const userResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.ME), {
             method: 'GET',
@@ -259,7 +250,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (userResponse.ok) {
             const userDataResponse = await userResponse.json();
             setUser(userDataResponse);
-            // Redirecionar para dashboard após registro bem-sucedido
             router.push('/dashboard');
           }
         } catch (userError) {

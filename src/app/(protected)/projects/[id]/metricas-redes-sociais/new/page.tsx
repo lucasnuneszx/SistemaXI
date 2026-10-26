@@ -85,7 +85,6 @@ export default function NovaMetricaPage() {
     setError(null);
 
     try {
-      // Converter strings vazias para null e números para integer
       const payload = {
         projeto_id: projectId,
         data_referente: formData.data_referente,

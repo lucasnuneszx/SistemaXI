@@ -72,13 +72,11 @@ export default function NewRelatorioPage() {
     observacoes: ''
   });
 
-  // Buscar dados do projeto e atividades
   useEffect(() => {
     const fetchDados = async () => {
       setLoadingAtividades(true);
       try {
 
-        // Buscar projeto
         const projetoResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1)}/${projectId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -93,7 +91,6 @@ export default function NewRelatorioPage() {
           console.error('Erro ao buscar projeto:', projetoResponse.status, projetoResponse.statusText);
         }
 
-        // Buscar atividades do projeto
         const atividadesUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES)}/projeto/${projectId}`;
         
         const atividadesResponse = await fetch(atividadesUrl, {
@@ -131,25 +128,21 @@ export default function NewRelatorioPage() {
     const registros = parseInt(formData.registros) || 0;
     const ftd = parseInt(formData.ftd) || 0;
 
-    // Calcular custo por lead
     if (valorInvestido > 0 && leads > 0) {
       const custoPorLead = (valorInvestido / leads).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_lead: custoPorLead }));
     }
 
-    // Calcular custo por registro
     if (valorInvestido > 0 && registros > 0) {
       const custoPorRegistro = (valorInvestido / registros).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_registro: custoPorRegistro }));
     }
 
-    // Calcular custo por FTD
     if (valorInvestido > 0 && ftd > 0) {
       const custoPorFtd = (valorInvestido / ftd).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_ftd: custoPorFtd }));
     }
 
-    // Calcular total de comissão - CORRIGIDO para lidar com valores negativos
     const comissaoCpa = parseFloat(formData.comissao_cpa) || 0;
     const revshare = parseFloat(formData.revshare) || 0;
     const totalComissao = comissaoCpa + revshare;
@@ -181,7 +174,6 @@ export default function NewRelatorioPage() {
     setError(null);
 
     try {
-      // Preparar dados para envio
       const submitData = {
         projeto_id: projectId,
         data_referente: formData.data_referente,

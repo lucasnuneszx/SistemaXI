@@ -21,7 +21,6 @@ export function LeadSidebar({ leads, onLeadClick }: LeadSidebarProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Filtrar e ordenar leads
   const filteredLeads = leads
     .filter(lead =>
       lead.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||

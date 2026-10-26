@@ -87,7 +87,6 @@ const generateMockPayables = (): Transaction[] => {
 
 const STORAGE_KEY = 'finance_payable_transactions';
 
-// Carregar transações do localStorage ou usar mock
 const loadTransactions = (): Transaction[] => {
   if (typeof window === 'undefined') return generateMockPayables();
   
@@ -95,7 +94,6 @@ const loadTransactions = (): Transaction[] => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Converter datas de string para Date
       return parsed.map((t: any) => ({
         ...t,
         dueDate: new Date(t.dueDate),
@@ -114,7 +112,6 @@ const loadTransactions = (): Transaction[] => {
   return mockData;
 };
 
-// Salvar transações no localStorage
 const saveTransactions = (transactions: Transaction[]) => {
   if (typeof window === 'undefined') return;
   
@@ -136,7 +133,6 @@ export default function ContasAPagarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
-  // Carregar transações apenas uma vez ao montar
   useEffect(() => {
     if (!isLoaded) {
       const loaded = loadTransactions();
@@ -145,7 +141,6 @@ export default function ContasAPagarPage() {
     }
   }, [isLoaded]);
 
-  // Salvar sempre que transactions mudar
   useEffect(() => {
     if (isLoaded) {
       saveTransactions(transactions);
@@ -225,13 +220,11 @@ export default function ContasAPagarPage() {
     };
 
     if (editingTransaction) {
-      // Atualizar transação existente - força recálculo dos KPIs
       setTransactions((prev) => {
         const updated = prev.map((t) => (t.id === editingTransaction.id ? newTransaction : t));
         return updated;
       });
     } else {
-      // Adicionar nova transação - força recálculo dos KPIs
       setTransactions((prev) => {
         const updated = [...prev, newTransaction];
         return updated;

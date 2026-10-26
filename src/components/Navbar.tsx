@@ -36,7 +36,6 @@ const Navbar = () => {
     logout();
   };
 
-  // Função para gerar iniciais do usuário
   const getUserInitials = (name: string) => {
     return name
       .split(' ')

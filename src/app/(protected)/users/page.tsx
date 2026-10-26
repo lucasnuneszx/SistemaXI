@@ -33,7 +33,6 @@ export default function UsersPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const fetchingRef = useRef(false);
 
-  // Buscar usuários
   useEffect(() => {
     if (!token || fetchingRef.current) {
       setLoading(false);
@@ -44,7 +43,6 @@ export default function UsersPage() {
       fetchingRef.current = true;
       setLoading(true);
       try {
-        // Buscar usuários
         const usersResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.USERS), {
           method: 'GET',
           headers: {
@@ -111,11 +109,9 @@ export default function UsersPage() {
         throw new Error(errorMessage);
       }
 
-      // Atualizar a lista retirando o usuário excluído
       setUsers(users.filter(user => user.id !== id));
       setSuccessMessage(`Usuário ${userName} excluído com sucesso!`);
       
-      // Limpar mensagem de sucesso após 3 segundos
       setTimeout(() => {
         setSuccessMessage(null);
       }, 3000);
@@ -124,7 +120,6 @@ export default function UsersPage() {
       const errorMsg = err instanceof Error ? err.message : 'Erro ao excluir usuário';
       setError(errorMsg);
       
-      // Limpar erro após 5 segundos
       setTimeout(() => {
         setError(null);
       }, 5000);
@@ -141,7 +136,6 @@ export default function UsersPage() {
     router.push(`/users/${userId}/edit`);
   };
 
-  // Função para formatar data
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -152,7 +146,6 @@ export default function UsersPage() {
     }
   };
 
-  // Função para obter iniciais
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -218,7 +211,6 @@ export default function UsersPage() {
                         <TableCell>
                           <div className="flex flex-row items-center gap-3">
                             {(() => {
-                              // Verificar se há foto válida
                               const hasValidPhoto = user.foto_perfil && 
                                                    typeof user.foto_perfil === 'string' && 
                                                    user.foto_perfil.trim() !== '' &&

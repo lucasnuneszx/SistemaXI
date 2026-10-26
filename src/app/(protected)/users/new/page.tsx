@@ -67,7 +67,6 @@ export default function NewUserPage() {
     },
   });
 
-  // Buscar setores
   useEffect(() => {
     if (!token) return;
 
@@ -97,7 +96,6 @@ export default function NewUserPage() {
     setError(null);
 
     try {
-      // Remover setorId se for "none"
       if (values.setorId === "none") {
         delete values.setorId;
       }
@@ -116,7 +114,6 @@ export default function NewUserPage() {
         throw new Error(errorData.error || 'Erro ao criar usuário');
       }
 
-      // Redirecionar para a lista de usuários após sucesso
       router.push('/users');
     } catch (err) {
       console.error('Erro ao criar usuário:', err);

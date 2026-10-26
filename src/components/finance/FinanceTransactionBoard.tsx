@@ -39,7 +39,6 @@ export function FinanceTransactionBoard({
     month: format(new Date(), 'yyyy-MM'),
   });
 
-  // Calcular KPIs - sempre recalcula quando transactions muda
   const kpis: FinanceKPIs = useMemo(() => {
     const now = new Date();
     const startOfCurrentMonth = startOfMonth(now);
@@ -84,7 +83,6 @@ export function FinanceTransactionBoard({
     };
   }, [transactions]);
 
-  // Filtrar transações
   const filteredTransactions = useMemo(() => {
     let filtered = [...transactions];
 

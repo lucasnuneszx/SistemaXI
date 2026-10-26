@@ -170,7 +170,6 @@ const AppSidebar = () => {
     ? 'https://i.imgur.com/UNByME0.png'
     : 'https://i.imgur.com/9SRt34r.png';
   
-  // Resetar loading quando a rota mudar
   useEffect(() => {
     if (loading) {
       setLoading(null);
@@ -180,10 +179,8 @@ const AppSidebar = () => {
   // Determinar role do usuário
   const getUserRole = () => {
     if (!user) return "creative_user";
-    // Verificar se é admin (pode ser is_admin ou role === "admin")
     const isAdmin = (user as any).is_admin || (user as any).role === "admin";
     if (isAdmin) return "admin";
-    // Verificar role do usuário
     const userRole = (user as any).role;
     if (userRole === "project_manager") return "project_manager";
     // Por padrão, assumir creative_user
@@ -192,7 +189,6 @@ const AppSidebar = () => {
 
   const userRole = getUserRole();
 
-  // Filtrar itens baseado na role do usuário
   const filterItemsByRole = (items: any[]) => {
     return items.filter(item => item.roles.includes(userRole));
   };
@@ -200,7 +196,6 @@ const AppSidebar = () => {
   const handleNavigation = (url: string) => {
     setLoading(url);
     
-    // Fechar sidebar no mobile após clicar
     if (isMobile) {
       // Pequeno delay para permitir que o usuário veja o feedback visual antes de fechar
       setTimeout(() => {

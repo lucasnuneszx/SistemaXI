@@ -89,7 +89,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         setBudget(project.budget?.toString() || "0");
         setStatus(project.status || "planning");
         
-        // Buscar usuários do projeto separadamente
         try {
           const usersResponse = await fetch(buildApiUrl(`/v1/user-projects/projects/${resolvedParams.id}/users`), {
             headers: {
@@ -143,7 +142,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     fetchAllUsers();
   }, [resolvedParams.id, token]);
 
-  // Função para adicionar usuário ao projeto
   const addUserToProject = async (userId: string) => {
     if (!token) return;
     
@@ -162,11 +160,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       });
 
       if (response.ok) {
-        // Encontrar o nome do usuário para exibir na notificação
         const user = allUsers.find((u: any) => String(u.id) === userId);
         const userName = user?.name || user?.username || user?.email || "usuário";
         
-        // Marcar usuário como recém adicionado para animação
         setJustAddedUser(userId);
         
         // Recarregar lista de usuários do projeto
@@ -185,7 +181,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         
         toast.success(`${userName} adicionado ao projeto!`);
         
-        // Remover animação após 2 segundos
         setTimeout(() => {
           setJustAddedUser(null);
         }, 2000);
@@ -202,15 +197,12 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     }
   };
 
-  // Função para remover usuário do projeto
   const removeUserFromProject = async (userId: string) => {
     if (!token) return;
     
-    // Encontrar o nome do usuário para exibir na confirmação
     const user = allUsers.find((u: any) => String(u.id) === userId);
     const userName = user?.name || user?.username || user?.email || "usuário";
     
-    // Mostrar toast de confirmação
     toast.warning(`Remover ${userName} do projeto?`, {
       description: "Esta ação não pode ser desfeita.",
       action: {
@@ -262,7 +254,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     });
   };
 
-  // Verificar se usuário já está no projeto
   const isUserInProject = (userId: string) => {
     return projectUsers.some((pu: any) => {
       const puUserId = pu.user_id || pu.user?.id || pu.id;

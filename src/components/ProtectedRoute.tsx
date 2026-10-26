@@ -31,7 +31,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [user, token, loading, router]);
 
-  // Mostrar loading enquanto verifica autenticação
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

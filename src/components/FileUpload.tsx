@@ -42,19 +42,16 @@ export default function FileUpload({
     //   return;
     // }
 
-    // Resetar estados
     setIsUploading(true);
     setUploadProgress(0);
     setError(null);
     setSuccess(false);
 
     try {
-      // Criar FormData
       const formData = new FormData();
       formData.append('file', file);
       formData.append('pasta', folder); // Enviar pasta como FormData, não como query parameter
       
-      // Adicionar dados de relacionamento se fornecidos
       if (projetoId) {
         formData.append('projetoId', projetoId);
       }
@@ -77,7 +74,6 @@ export default function FileUpload({
         body: formData,
       });
 
-      // Limpar intervalo de progresso
       clearInterval(progressInterval);
 
       if (!response.ok) {
@@ -94,11 +90,9 @@ export default function FileUpload({
 
       const data = await response.json();
       
-      // Definir progresso como 100% e marcar como sucesso
       setUploadProgress(100);
       setSuccess(true);
       
-      // Salvar dados do arquivo
       setUploadedFile({
         url: data.url,
         key: data.key,
@@ -122,7 +116,6 @@ export default function FileUpload({
     }
   };
 
-  // Função para simular o progresso do upload
   const simulateProgress = () => {
     let progress = 0;
     return setInterval(() => {

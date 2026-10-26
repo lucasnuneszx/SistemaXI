@@ -135,7 +135,6 @@ function FunilVendasContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  // Carregar dados da API
   useEffect(() => {
     if (!token) return;
 
@@ -161,7 +160,6 @@ function FunilVendasContent() {
           const columnsData = await columnsResponse.json();
           const leadsData = await leadsResponse.json();
           
-          // Criar um mapa de colunas
           const formattedColumns: KanbanColumn[] = columnsData.map((col: any) => ({
             id: col.id,
             title: col.title,
@@ -170,7 +168,6 @@ function FunilVendasContent() {
             leads: [], // Inicializar vazio, vamos preencher depois
           }));
           
-          // Distribuir leads nas colunas baseado no column_id
           const leadsByColumn = new Map<string, Lead[]>();
           const backlogLeads: Lead[] = [];
           
@@ -291,7 +288,6 @@ function FunilVendasContent() {
     // Mover lead localmente primeiro
     moveLead(draggableId, fromColumnId, toColumnId || 'backlog', destination.index);
 
-    // Salvar na API apenas se for um UUID válido
     if (isValidUUID(draggableId)) {
       try {
         const response = await fetch(buildApiUrl(`${API_CONFIG.ENDPOINTS.LEADS}/${draggableId}/move`), {
@@ -316,7 +312,6 @@ function FunilVendasContent() {
           moveLead(draggableId, toColumnId || 'backlog', fromColumnId || 'backlog', source.index);
         } else {
           const updatedLead = await response.json();
-          // Atualizar o lead localmente com os dados atualizados do servidor
           if (updatedLead) {
             // O lead já foi movido localmente, apenas garantir que está sincronizado
           }
@@ -332,7 +327,6 @@ function FunilVendasContent() {
     }
   };
 
-  // Função para verificar se é um UUID válido
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(str);
@@ -381,7 +375,6 @@ function FunilVendasContent() {
   const handleSaveLead = async (lead: Lead) => {
     try {
       if (selectedLead) {
-        // Atualizar lead existente
         const response = await fetch(buildApiUrl(`${API_CONFIG.ENDPOINTS.LEADS}/${lead.id}`), {
           method: 'PUT',
           headers: {
@@ -408,7 +401,6 @@ function FunilVendasContent() {
           });
         }
       } else {
-        // Criar novo lead
         const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.LEADS), {
           method: 'POST',
           headers: {
@@ -460,7 +452,6 @@ function FunilVendasContent() {
   const handleSaveColumn = async (column: KanbanColumn) => {
     try {
       if (selectedColumn) {
-        // Atualizar coluna existente
         const response = await fetch(buildApiUrl(`${API_CONFIG.ENDPOINTS.KANBAN_COLUMNS}/${column.id}`), {
           method: 'PUT',
           headers: {
@@ -478,7 +469,6 @@ function FunilVendasContent() {
           updateColumn(column.id, column);
         }
       } else {
-        // Criar nova coluna
         const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.KANBAN_COLUMNS), {
           method: 'POST',
           headers: {

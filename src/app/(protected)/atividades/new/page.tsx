@@ -93,12 +93,10 @@ function NovaAtividadeContent() {
     },
   });
 
-  // Buscar dados para os selects
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Buscar projetos
         const projetosResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -110,7 +108,6 @@ function NovaAtividadeContent() {
           setProjetos(projetosData);
         }
 
-        // Buscar usuários
         const usuariosResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.USERS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -124,7 +121,6 @@ function NovaAtividadeContent() {
           console.error('Erro ao buscar usuários:', usuariosResponse.status);
         }
 
-        // Buscar setores
         const setoresResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.SECTORS), {
           headers: {
             Authorization: `Bearer ${token}`
@@ -152,14 +148,12 @@ function NovaAtividadeContent() {
     setError(null);
 
     try {
-      // Remover campos vazios
       Object.keys(values).forEach(key => {
         if (values[key as keyof typeof values] === "") {
           delete values[key as keyof typeof values];
         }
       });
 
-      // Validar campos obrigatórios
       if (!values.projetoId) {
         throw new Error('Projeto é obrigatório');
       }
@@ -172,7 +166,6 @@ function NovaAtividadeContent() {
         projeto_id: values.projetoId, // Campo obrigatório
       };
 
-      // Adicionar campos opcionais apenas se tiverem valor
       if (values.descricao && values.descricao.trim()) {
         transformedData.descricao = values.descricao.trim();
       }
@@ -233,7 +226,6 @@ function NovaAtividadeContent() {
         throw new Error(errorMessage);
       }
 
-      // Redirecionar conforme origem após sucesso
       const successUrl = projectId ? `/projects/${projectId}` : '/atividades';
       router.push(successUrl);
     } catch (err) {

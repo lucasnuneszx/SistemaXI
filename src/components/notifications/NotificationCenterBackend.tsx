@@ -43,7 +43,6 @@ export default function NotificationCenterBackend() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Carregar notificações
   const fetchNotifications = async () => {
     if (!token) return;
 
@@ -90,7 +89,6 @@ export default function NotificationCenterBackend() {
   useEffect(() => {
     fetchNotifications();
     
-    // Atualizar a cada 30 segundos
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, [token]);
@@ -102,7 +100,6 @@ export default function NotificationCenterBackend() {
     }
   }, [isOpen, token]);
 
-  // Filtrar notificações por aba
   const getFilteredNotifications = () => {
     const filtered = notifications.filter(n => n.status !== 'dismissed');
     
@@ -132,7 +129,6 @@ export default function NotificationCenterBackend() {
           credentials: 'omit',
         });
         
-        // Atualizar estado local
         setNotifications(prev => prev.map(n => 
           n.id === notification.id ? { ...n, status: 'read' as const } : n
         ));

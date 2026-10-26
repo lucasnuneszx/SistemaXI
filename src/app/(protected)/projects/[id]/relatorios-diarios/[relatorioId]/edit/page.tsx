@@ -72,12 +72,10 @@ export default function EditRelatorioPage() {
     observacoes: ''
   });
 
-  // Buscar dados existentes
   useEffect(() => {
     const fetchData = async () => {
       setLoadingData(true);
       try {
-        // Buscar relatório existente
         const relatorioResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/${relatorioId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -110,7 +108,6 @@ export default function EditRelatorioPage() {
           });
         }
 
-        // Buscar projeto
         const projetoResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1)}/${projectId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -123,7 +120,6 @@ export default function EditRelatorioPage() {
           setProjeto(projetoData);
         }
 
-        // Buscar atividades do projeto
         const atividadesResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ACTIVITIES)}/projeto/${projectId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -156,25 +152,21 @@ export default function EditRelatorioPage() {
     const registros = parseInt(formData.registros) || 0;
     const ftd = parseInt(formData.ftd) || 0;
 
-    // Calcular custo por lead
     if (valorInvestido > 0 && leads > 0) {
       const custoPorLead = (valorInvestido / leads).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_lead: custoPorLead }));
     }
 
-    // Calcular custo por registro
     if (valorInvestido > 0 && registros > 0) {
       const custoPorRegistro = (valorInvestido / registros).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_registro: custoPorRegistro }));
     }
 
-    // Calcular custo por FTD
     if (valorInvestido > 0 && ftd > 0) {
       const custoPorFtd = (valorInvestido / ftd).toFixed(2);
       setFormData(prev => ({ ...prev, custo_por_ftd: custoPorFtd }));
     }
 
-    // Calcular total de comissão - CORRIGIDO para lidar com valores negativos
     const comissaoCpa = parseFloat(formData.comissao_cpa) || 0;
     const revshare = parseFloat(formData.revshare) || 0;
     const totalComissao = comissaoCpa + revshare;
@@ -206,7 +198,6 @@ export default function EditRelatorioPage() {
     setError(null);
 
     try {
-      // Preparar dados para envio (não incluir projeto_id no update)
       const submitData = {
         data_referente: formData.data_referente,
         criacao_criativos: false, // Mantendo por compatibilidade com backend

@@ -220,7 +220,6 @@ export default function DashboardPage() {
         if (projetosData.length > 0) {
           try {
             
-            // Buscar dados consolidados de cada projeto
             const consolidadoPromises = projetosData.map(async (projeto: Projeto) => {
               try {
                 const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/dashboard/consolidado?projeto_id=${projeto.id}`, {
@@ -256,13 +255,11 @@ export default function DashboardPage() {
               }
             });
             
-            // Calcular ROI médio
             if (metricasTotaisConsolidadas.total_despesas > 0) {
               metricasTotaisConsolidadas.roi_medio = (metricasTotaisConsolidadas.total_lucro / metricasTotaisConsolidadas.total_despesas) * 100;
             }
             
             
-            // Buscar dados diários para o gráfico
             const allRelatoriosPromises = projetosData.map(async (projeto: Projeto) => {
               try {
                 const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/projeto/${projeto.id}/ultimos?limit=30`, {
@@ -282,7 +279,6 @@ export default function DashboardPage() {
             const allRelatoriosResults = await Promise.all(allRelatoriosPromises);
             const allRelatorios = allRelatoriosResults.flat();
             
-            // Agrupar dados por data
             const groupedByDate: {[key: string]: {registros: number, depositos: number, leads: number, ftd: number}} = {};
             
             allRelatorios.forEach((relatorio: {
@@ -306,7 +302,6 @@ export default function DashboardPage() {
               groupedByDate[dateKey].ftd += relatorio.ftd || 0;
             });
             
-            // Converter para array
             dadosDiariosGerais = Object.entries(groupedByDate)
               .map(([data, valores]) => ({
                 data,
@@ -330,7 +325,6 @@ export default function DashboardPage() {
           metricas_totais: metricasTotaisConsolidadas
         });
 
-        // Buscar dashboard para cada projeto individualmente  
         if (projetosData.length > 0) {
           const projetoDashboardPromises = projetosData.map(async (projeto: Projeto) => {
             try {
@@ -347,7 +341,6 @@ export default function DashboardPage() {
                 const dashboardData = await dashboardResponse.json();
                 const relatosData = await relatosResponse.json();
                 
-                // Converter dados diários para formato do gráfico
                 const dadosDiarios = relatosData.reverse().map((relatorio: {
                   data_referente: string;
                   registros?: number;
@@ -385,7 +378,6 @@ export default function DashboardPage() {
             }, {} as {[key: string]: DashboardFinanceiro});
           setProjetoDashboards(dashboardsObj);
 
-          // Buscar dados de redes sociais para cada projeto
           const redesSociaisPromises = projetosData.map(async (projeto: Projeto) => {
             try {
               const [estatisticasResponse, metricasResponse] = await Promise.all([
@@ -439,7 +431,6 @@ export default function DashboardPage() {
         const atividadesData = await atividadesResponse.json();
         const atividadesArray = Array.isArray(atividadesData) ? atividadesData : [];
         
-        // Processar resumo das atividades
         const summary: AtividadesSummary = {
           total: atividadesArray.length,
           concluidas: atividadesArray.filter(a => a.status === 'Concluída').length,
@@ -475,7 +466,6 @@ export default function DashboardPage() {
     const { dados_diarios, metricas_totais } = data;
     const redesSociaisData = projectId ? projetoRedesSociais[projectId] : null;
     
-    // Calcular período dos dados
     const hoje = new Date();
     const dataInicio = new Date();
     dataInicio.setDate(hoje.getDate() - 30);
@@ -511,7 +501,6 @@ export default function DashboardPage() {
                     variant="default" 
                     size="sm"
                     onClick={() => {
-                      // Buscar o relatório mais recente e redirecionar
                       fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/projeto/${projectId}/ultimos?limit=1`, {
                         headers: { Authorization: `Bearer ${token}` }
                       })
@@ -608,7 +597,6 @@ export default function DashboardPage() {
                   variant="outline" 
                   size="sm"
                   onClick={() => {
-                    // Buscar o relatório mais recente e redirecionar
                     fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.DAILY_REPORTS)}/projeto/${projectId}/ultimos?limit=1`, {
                       headers: { Authorization: `Bearer ${token}` }
                     })

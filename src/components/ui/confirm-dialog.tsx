@@ -31,7 +31,6 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const handleConfirm = () => {
     onConfirm();
-    // Fechar o diálogo após confirmação
     onOpenChange(false);
   };
 

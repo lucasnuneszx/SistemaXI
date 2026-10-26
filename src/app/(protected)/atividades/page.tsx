@@ -87,25 +87,20 @@ export default function AtividadesPage() {
   const [loadingAdd, setLoadingAdd] = useState(false);
 
   
-  // Estados para filtros e visualização
   const [viewMode, setViewMode] = useState<'board' | 'list' | 'calendar'>('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterPriority, setFilterPriority] = useState<string>('all');
   const [filterResponsavel, setFilterResponsavel] = useState<string>('all');
   
-  // Estados para salvamento automático
   const [savingItems, setSavingItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [errorItems, setErrorItems] = useState<Set<string>>(new Set());
 
-  // Estados para seções expandidas por setor
   const [expandedSectors, setExpandedSectors] = useState<Set<string>>(new Set());
 
-  // Estados para usuários disponíveis
   const [usuarios, setUsuarios] = useState<{ id: string; name: string; email: string }[]>([]);
 
-  // Estados para criação rápida inline
   const [showQuickCreate, setShowQuickCreate] = useState<string | null>(null);
   const [quickCreateData, setQuickCreateData] = useState({
     nome: '',
@@ -120,9 +115,7 @@ export default function AtividadesPage() {
   // Lista de projetos disponíveis
   const [projetos, setProjetos] = useState<{ id: string; name: string }[]>([]);
 
-  // Função universal para atualizar atividade
   const updateAtividade = async (id: string, field: string, value: string | number | null, oldValue: string | number | null) => {
-    // Adicionar ao estado de salvamento
     setSavingItems(prev => new Set([...prev, `${id}-${field}`]));
     setSavedItems(prev => {
       const newSet = new Set([...prev]);
@@ -135,7 +128,6 @@ export default function AtividadesPage() {
       return newSet;
     });
 
-    // Atualizar localmente primeiro (optimistic update)
     setAtividades(prev => 
       prev.map(atividade => 
         atividade.id === id ? { ...atividade, [field]: value } : atividade
@@ -170,7 +162,6 @@ export default function AtividadesPage() {
       
       setSavedItems(prev => new Set([...prev, `${id}-${field}`]));
 
-      // Remover indicador de sucesso após 2 segundos
       setTimeout(() => {
         setSavedItems(prev => {
           const newSet = new Set([...prev]);
@@ -189,7 +180,6 @@ export default function AtividadesPage() {
         )
       );
 
-      // Adicionar ao estado de erro
       setSavingItems(prev => {
         const newSet = new Set([...prev]);
         newSet.delete(`${id}-${field}`);
@@ -198,7 +188,6 @@ export default function AtividadesPage() {
       
       setErrorItems(prev => new Set([...prev, `${id}-${field}`]));
 
-      // Remover indicador de erro após 5 segundos
       setTimeout(() => {
         setErrorItems(prev => {
           const newSet = new Set([...prev]);
@@ -209,7 +198,6 @@ export default function AtividadesPage() {
     }
   };
 
-  // Função para obter ícone de status de salvamento
   const getSaveStatusIcon = (atividadeId: string, field: string) => {
     const key = `${atividadeId}-${field}`;
     
@@ -261,7 +249,6 @@ export default function AtividadesPage() {
       }
     ];
 
-    // Distribuir atividades nas colunas
     const filteredAtividades = getFilteredAtividades();
     
     filteredAtividades.forEach(atividade => {
@@ -375,7 +362,6 @@ export default function AtividadesPage() {
     
     if (source.droppableId === destination.droppableId) return;
 
-    // Mapear ID da coluna para status
     const statusMap: { [key: string]: string } = {
       'nao-iniciada': 'Não iniciada',
       'em-andamento': 'Em andamento',
@@ -386,11 +372,9 @@ export default function AtividadesPage() {
     const newStatus = statusMap[destination.droppableId];
     if (!newStatus) return;
 
-    // Encontrar a atividade para obter o status atual
     const atividade = atividades.find(a => a.id === draggableId);
     if (!atividade) return;
 
-    // Usar a função universal de atualização
     updateAtividade(draggableId, 'status', newStatus, atividade.status);
   };
 
@@ -431,13 +415,11 @@ export default function AtividadesPage() {
     }
   };
 
-  // Função para formatar data
   const formatarData = (dataString?: string) => {
     if (!dataString) return '-';
     return format(new Date(dataString), 'dd/MM/yyyy', { locale: ptBR });
   };
 
-  // Função para retornar cor da prioridade
   const getPrioridadeColor = (prioridade: string) => {
     switch (prioridade.toLowerCase()) {
       case 'alta':
@@ -451,7 +433,6 @@ export default function AtividadesPage() {
     }
   };
 
-  // Função para obter ícone da prioridade
   const getPrioridadeIcon = (prioridade: string) => {
     switch (prioridade.toLowerCase()) {
       case 'urgente':
@@ -463,13 +444,11 @@ export default function AtividadesPage() {
     }
   };
 
-  // Função para obter iniciais do nome
   const getInitials = (name?: string) => {
     if (!name || typeof name !== 'string') return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  // Função para agrupar atividades por setor
   const getAtividadesPorSetor = () => {
     const atividadesFiltradas = getFilteredAtividades();
     const grupos: { [key: string]: { setor: { id: string; nome: string } | null; atividades: Atividade[] } } = {};
@@ -493,7 +472,6 @@ export default function AtividadesPage() {
     });
   };
 
-  // Função para alternar seção expandida
   const toggleSector = (setorId: string) => {
     setExpandedSectors(prev => {
       const newSet = new Set(prev);
@@ -506,13 +484,11 @@ export default function AtividadesPage() {
     });
   };
 
-  // Inicializar com todos os setores expandidos
   useEffect(() => {
     const setores = getAtividadesPorSetor();
     setExpandedSectors(new Set(setores.map(grupo => grupo.setor?.id || 'sem-setor')));
   }, [atividades]);
 
-  // Funções para criação rápida
   const handleShowQuickCreate = (setorId: string) => {
     setShowQuickCreate(setorId);
     setQuickCreateData({
@@ -575,7 +551,6 @@ export default function AtividadesPage() {
     }
   };
 
-  // Renderizar Card da Atividade
   const renderAtividadeCard = (atividade: Atividade, index: number) => {
     const getBorderColor = (prioridade: string) => {
       switch (prioridade.toLowerCase()) {

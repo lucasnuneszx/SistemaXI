@@ -67,7 +67,6 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     },
   });
 
-  // Buscar setores primeiro
   useEffect(() => {
     if (!token) return;
 
@@ -93,14 +92,12 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     fetchSetores();
   }, [token]);
 
-  // Buscar usuário
   useEffect(() => {
     if (!token) return;
 
     const fetchUser = async () => {
       setLoading(true);
       try {
-        // Buscar usuário
         const userResponse = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.USERS)}/${resolvedParams.id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -143,7 +140,6 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
         delete values.password;
       }
 
-      // Remover setorId se for "none"
       if (values.setorId === "none") {
         delete values.setorId;
       }
@@ -162,7 +158,6 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
         throw new Error(errorData.error || 'Erro ao atualizar usuário');
       }
 
-      // Redirecionar para a lista de usuários após sucesso
       router.push('/users');
     } catch (err) {
       console.error('Erro ao atualizar usuário:', err);

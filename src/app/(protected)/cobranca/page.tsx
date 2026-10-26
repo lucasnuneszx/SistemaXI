@@ -88,7 +88,6 @@ export default function CobrancaPage() {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [sendingNotification, setSendingNotification] = useState<string | null>(null);
   
-  // Estado do modal de mensagem direta
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [messageTitle, setMessageTitle] = useState('');
@@ -96,7 +95,6 @@ export default function CobrancaPage() {
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [sendingMessage, setSendingMessage] = useState(false);
 
-  // Carregar projetos, atividades e usuários
   useEffect(() => {
     if (!token) return;
 
@@ -104,7 +102,6 @@ export default function CobrancaPage() {
       try {
         setLoading(true);
         
-        // Buscar projetos
         const projectsResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.PROJECTS_V1), {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -116,7 +113,6 @@ export default function CobrancaPage() {
           const projectsData = await projectsResponse.json();
           setProjects(projectsData);
           
-          // Buscar equipe de cada projeto
           for (const project of projectsData) {
             try {
               const teamResponse = await fetch(
@@ -139,7 +135,6 @@ export default function CobrancaPage() {
           }
         }
 
-        // Buscar atividades pendentes
         const atividadesResponse = await fetch(
           buildApiUrl(`${API_CONFIG.ENDPOINTS.ACTIVITIES_OLD}?include=projeto,responsavel`),
           {
@@ -152,14 +147,12 @@ export default function CobrancaPage() {
 
         if (atividadesResponse.ok) {
           const atividadesData = await atividadesResponse.json();
-          // Filtrar apenas atividades pendentes (não concluídas)
           const pendentes = atividadesData.filter((a: any) => 
             a.status !== 'Concluída' && a.status !== 'concluida' && a.status !== 'completed'
           );
           setAtividades(pendentes);
         }
 
-        // Buscar todos os usuários
         const usersResponse = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.USERS), {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -182,7 +175,6 @@ export default function CobrancaPage() {
     fetchData();
   }, [token, user]);
 
-  // Enviar notificação de cobrança
   const handleCobrar = async (
     type: 'cobrar' | 'sinalizar' | 'mensagem',
     projectId: string,
@@ -198,7 +190,6 @@ export default function CobrancaPage() {
     setSendingNotification(`${type}-${projectId}-${atividadeId || 'project'}`);
 
     try {
-      // Coletar destinatários: proprietário + equipe
       const destinatarios: string[] = [];
       
       if (project.owner_id) {
@@ -219,7 +210,6 @@ export default function CobrancaPage() {
         return;
       }
 
-      // Preparar mensagem baseada no tipo
       let titulo = '';
       let mensagem = '';
       let tipoNotificacao: 'nudge' | 'info' | 'urgent' = 'nudge';
@@ -250,10 +240,8 @@ export default function CobrancaPage() {
         tipoNotificacao = 'info';
       }
 
-      // Enviar notificação para todos os destinatários
       const queryParams = destinatarios.map(id => `usuario_ids=${id}`).join('&');
       
-      // Preparar dados da notificação
       const notificacaoData: any = {
         tipo: tipoNotificacao,
         titulo,
@@ -262,12 +250,10 @@ export default function CobrancaPage() {
         contexto_nome: atividadeNome || projectName,
       };
       
-      // Adicionar contexto_id apenas se não for null
       if (atividadeId || projectId) {
         notificacaoData.contexto_id = atividadeId || projectId;
       }
       
-      // Adicionar action_url apenas se houver
       const actionUrl = atividadeId 
         ? `/atividades/${atividadeId}`
         : `/projects/${projectId}`;
@@ -291,7 +277,6 @@ export default function CobrancaPage() {
         let errorMessage = 'Erro ao enviar notificação';
         try {
           const errorData = await response.json();
-          // Extrair mensagem de erro de diferentes formatos possíveis
           if (typeof errorData === 'string') {
             errorMessage = errorData;
           } else if (errorData?.detail) {
@@ -325,7 +310,6 @@ export default function CobrancaPage() {
     }
   };
 
-  // Enviar mensagem direta
   const handleSendDirectMessage = async () => {
     if (!token || !selectedUser || !messageTitle.trim() || !messageContent.trim()) {
       toast.error('Preencha todos os campos obrigatórios');
@@ -342,7 +326,6 @@ export default function CobrancaPage() {
         mensagemCompleta += `\n\n[Anexo: ${attachedFile.name}]`;
       }
 
-      // Preparar dados da notificação (sem campos null)
       const notificacaoData: any = {
         tipo: 'info',
         titulo: messageTitle.trim(),
@@ -365,7 +348,6 @@ export default function CobrancaPage() {
         let errorMessage = 'Erro ao enviar mensagem';
         try {
           const errorData = await response.json();
-          // Extrair mensagem de erro de diferentes formatos possíveis
           if (typeof errorData === 'string') {
             errorMessage = errorData;
           } else if (errorData?.detail) {
@@ -389,7 +371,6 @@ export default function CobrancaPage() {
 
       toast.success('Mensagem enviada com sucesso!');
       
-      // Limpar formulário
       setSelectedUser('');
       setMessageTitle('');
       setMessageContent('');
@@ -405,7 +386,6 @@ export default function CobrancaPage() {
     }
   };
 
-  // Agrupar atividades por projeto
   const atividadesPorProjeto = atividades.reduce((acc, atividade) => {
     const projetoId = atividade.projeto_id || 'sem-projeto';
     if (!acc[projetoId]) {

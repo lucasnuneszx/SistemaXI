@@ -14,7 +14,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
-  // Verificar se é uma rota pública
   if (publicPaths.some(path => pathname === path || pathname.startsWith(`${path}/`))) {
     return NextResponse.next();
   }
@@ -27,7 +26,6 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Definir em quais caminhos o middleware deve ser executado
 export const config = {
   matcher: [
     /*

@@ -1,10 +1,8 @@
-// Função para determinar se deve usar proxy
 const shouldUseProxy = (): boolean => {
   if (typeof window === 'undefined') return false; // Server-side
   return window.location.protocol === 'https:' && process.env.NODE_ENV === 'production';
 };
 
-// Função para obter URL base
 const getBaseUrl = (): string => {
   if (shouldUseProxy()) {
     return `${window.location.origin}/api/proxy`;
@@ -12,7 +10,6 @@ const getBaseUrl = (): string => {
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 };
 
-// Função para obter URL da API
 const getApiBaseUrl = (): string => {
   if (shouldUseProxy()) {
     return `${window.location.origin}/api/proxy/api`;
@@ -94,21 +91,18 @@ export const API_CONFIG = {
   }
 };
 
-// Função helper para construir URLs completas da API
 export const buildApiUrl = (endpoint: string): string => {
   const baseUrl = API_CONFIG.API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   return `${baseUrl}${cleanEndpoint}`;
 };
 
-// Função helper para URLs da API base (sem /api)
 export const buildBaseUrl = (endpoint: string): string => {
   const baseUrl = API_CONFIG.BASE_URL.replace(/\/$/, ''); // Remove trailing slash
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   return `${baseUrl}${cleanEndpoint}`;
 };
 
-// Funções helper específicas para endpoints comuns
 export const getProjectUrl = (projectId: string, endpoint?: string): string => {
   const base = `${API_CONFIG.ENDPOINTS.PROJECTS_V1}/${projectId}`;
   return buildApiUrl(endpoint ? `${base}${endpoint}` : base);
