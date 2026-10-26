@@ -32,10 +32,8 @@ class ProjectService:
             # Admin can see all projects
             return db.query(Project).all()
         
-        # Get projects user owns
         owned_projects = db.query(Project).filter(Project.owner_id == user_id).all()
         
-        # Get projects user is assigned to
         assigned_project_ids = db.query(UserProject.project_id).filter(
             UserProject.user_id == user_id
         ).subquery()
@@ -86,7 +84,6 @@ class ProjectService:
     @staticmethod
     def delete_project(db: Session, project_id: Union[str, uuid.UUID]) -> bool:
         """Delete project"""
-        # Converter string para UUID se necessário
         if isinstance(project_id, str):
             try:
                 project_id = uuid.UUID(project_id)
@@ -98,7 +95,6 @@ class ProjectService:
             if not db_project:
                 return False
             
-            # Limpar tabelas relacionadas que podem não ter cascade configurado
             try:
                 from sqlalchemy import text
                 
@@ -114,7 +110,6 @@ class ProjectService:
                 ).scalar()
                 
                 if funnel_cards_exists:
-                    # Buscar credenciais do projeto
                     credenciais_ids = db.execute(
                         text("SELECT id FROM credenciais_acesso WHERE projeto_id = :project_id"),
                         {"project_id": str(db_project.id)}

@@ -130,7 +130,6 @@ class MetricasRedesSociaisService:
                 total_seguidores_tiktok=None
             )
         
-        # Buscar últimos valores para cada rede social
         latest_metrics = query.order_by(MetricasRedesSociais.data_referente.desc()).first()
         
         return EstatisticasRedesSociais(

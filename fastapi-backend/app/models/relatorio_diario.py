@@ -29,7 +29,7 @@ class RelatorioDiario(Base):
     identidade_visual = Column(Boolean, default=False)
     outras_atividades = Column(Text, nullable=True)  # Campo livre para outras atividades
     
-    # NOVO: Relacionamento com atividades do projeto
+    # Atividades do projeto vinculadas ao relatório
     atividades_realizadas = relationship(
         "Atividade",
         secondary=relatorio_atividade_association,

@@ -28,7 +28,6 @@ def create_metricas(
     """Criar novas métricas de redes sociais"""
     service = MetricasRedesSociaisService(db)
     
-    # Verificar se já existe métricas para essa data
     existing = service.get_metricas_by_projeto_and_data(
         metricas.projeto_id, 
         metricas.data_referente

@@ -10,7 +10,6 @@ Script para criar as novas tabelas no banco de dados:
 import sys
 from pathlib import Path
 
-# Add the app directory to the path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from app.core.database import engine, Base
@@ -24,10 +23,9 @@ def create_tables():
     print("- clientes")
     print("- propostas")
     
-    # Create all tables
     Base.metadata.create_all(bind=engine)
     
-    print("\n✅ Tables created successfully!")
+    print("\nTables created successfully!")
 
 if __name__ == "__main__":
     create_tables()

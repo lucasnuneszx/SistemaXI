@@ -75,9 +75,7 @@ async def create_criativo(
     try:
         arquivo_url = None
         
-        # Processar upload do arquivo se fornecido
         if file:
-            # Validar tipo de arquivo
             allowed_types = [
                 'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
                 'video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv',
@@ -98,7 +96,6 @@ async def create_criativo(
                     detail=f"Tipo de arquivo não permitido: {file.content_type}"
                 )
             
-            # Validar tamanho (50MB máximo)
             if file.size and file.size > 50 * 1024 * 1024:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -117,7 +114,6 @@ async def create_criativo(
                     detail=f"Erro no upload do arquivo: {str(e)}"
                 )
         
-        # Processar data de prazo
         prazo_datetime = None
         if prazo:
             try:
@@ -128,7 +124,6 @@ async def create_criativo(
                     detail="Formato de data inválido para prazo"
                 )
         
-        # Criar objeto CriativoCreate
         criativo_data = CriativoCreate(
             titulo=titulo,
             descricao=descricao,
@@ -327,7 +322,6 @@ def get_criativo_file_url(
             detail="Criativo não encontrado"
         )
     
-    # Verificar se o criativo tem arquivo
     if not criativo.arquivo_bruto_url:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -25,7 +25,6 @@ def get_casas_by_projeto(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get all casas parceiras for a project - accessible to all authenticated users"""
-    # Verificar se o projeto existe
     projeto = ProjectService.get_project(db, project_id=projeto_id)
     if not projeto:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -57,7 +56,6 @@ def create_casa(
     current_user: User = Depends(get_current_active_user)
 ):
     """Create new casa parceira"""
-    # Verificar se o usuário tem acesso ao projeto
     projeto = ProjectService.get_project(db, project_id=casa.projeto_id)
     if not projeto:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -68,7 +66,6 @@ def create_casa(
             detail="Not enough permissions"
         )
     
-    # Verificar se slug é único
     existing_casa = CasaParceiraService.get_casa_by_slug(db, slug=casa.slug)
     if existing_casa:
         raise HTTPException(
@@ -91,14 +88,12 @@ def update_casa(
     if not casa:
         raise HTTPException(status_code=404, detail="Casa parceira not found")
     
-    # Verificar permissões
     if casa.projeto.owner_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
         )
     
-    # Verificar slug único se está sendo alterado
     if casa_update.slug and casa_update.slug != casa.slug:
         existing_casa = CasaParceiraService.get_casa_by_slug(db, slug=casa_update.slug)
         if existing_casa:
@@ -122,7 +117,6 @@ def delete_casa(
     if not casa:
         raise HTTPException(status_code=404, detail="Casa parceira not found")
     
-    # Verificar permissões
     if casa.projeto.owner_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -148,7 +142,6 @@ def generate_link(
     if not casa:
         raise HTTPException(status_code=404, detail="Casa parceira not found")
     
-    # Verificar permissões
     if casa.projeto.owner_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

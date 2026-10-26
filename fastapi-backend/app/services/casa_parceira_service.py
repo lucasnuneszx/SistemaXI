@@ -69,7 +69,6 @@ class CasaParceiraService:
             "utm_campaign": casa.utm_campaign or casa.projeto.name.lower().replace(" ", "_"),
         }
         
-        # Usar configurações pré-definidas dos canais
         if casa.canais_config:
             canal_config = None
             
@@ -107,11 +106,9 @@ class CasaParceiraService:
         parsed_url = urlparse(base_url)
         query_params = parse_qs(parsed_url.query)
         
-        # Adicionar código de afiliado se definido
         if casa.codigo_afiliado:
             query_params['shareCode'] = [casa.codigo_afiliado]
         
-        # Adicionar UTM parameters
         for key, value in utm_params.items():
             if value:
                 query_params[key] = [value]

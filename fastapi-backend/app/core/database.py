@@ -8,22 +8,18 @@ import os
 # Ignora completamente settings.database_url se existir no ambiente
 env_db_url = os.getenv("DATABASE_URL")
 if env_db_url:
-    # Limpar '=' no início se existir
     if env_db_url.startswith('='):
         env_db_url = env_db_url[1:].strip()
     database_url = env_db_url
-    print(f"✅ database.py: DATABASE_URL do ambiente Railway: {env_db_url.split('@')[0] if '@' in env_db_url else env_db_url[:50]}...")
+    print(f"database.py: DATABASE_URL do ambiente Railway: {env_db_url.split('@')[0] if '@' in env_db_url else env_db_url[:50]}...")
     print(f"   Tipo detectado: {'PostgreSQL' if 'postgresql' in database_url.lower() else 'SQLite'}")
 else:
     # Fallback: usar do settings
     database_url = settings.database_url.strip()
-    # Remover '=' no início se existir
     if database_url.startswith('='):
         database_url = database_url[1:].strip()
-    print(f"⚠️  database.py: DATABASE_URL não encontrada no ambiente, usando fallback: {database_url[:50]}...")
-    print(f"   ⚠️  ATENÇÃO: Isso significa que a variável DATABASE_URL não está configurada no Railway!")
+    print(f"database.py: DATABASE_URL não encontrada no ambiente, usando fallback: {database_url[:50]}...")
 
-# Create database engine
 if database_url.startswith("sqlite"):
     engine = create_engine(
         database_url, 
@@ -38,7 +34,6 @@ else:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create declarative base
 Base = declarative_base()
 
 
@@ -55,15 +50,15 @@ def test_connection() -> bool:
     """Test database connection"""
     try:
         with engine.connect() as connection:
-            print("✅ Conexão com banco de dados bem-sucedida!")
+            print("Conexão com banco de dados bem-sucedida!")
             if '@' in settings.database_url:
                 masked_url = settings.database_url.split('@')[0] + "@***"
             else:
                 masked_url = settings.database_url
-            print(f"📍 Database URL: {masked_url}")
+            print(f"Database URL: {masked_url}")
             return True
     except Exception as e:
-        print(f"❌ Erro de conexão com banco: {e}")
+        print(f"Erro de conexão com banco: {e}")
         return False
 
 

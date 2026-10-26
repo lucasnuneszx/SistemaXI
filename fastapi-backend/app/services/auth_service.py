@@ -11,7 +11,6 @@ class AuthService:
     @staticmethod
     def authenticate_user(db: Session, username: str, password: str) -> Optional[User]:
         """Authenticate user by username/email and password"""
-        # Handle alias: admin@admin.com redirects to admin@sistemaxi.com
         login_username = username
         if username == "admin@admin.com":
             login_username = "admin@sistemaxi.com"
@@ -32,7 +31,6 @@ class AuthService:
     @staticmethod
     def create_admin_fallback(db: Session) -> Optional[User]:
         """Create admin fallback authentication"""
-        # Check if admin@admin.com user exists
         admin_user = db.query(User).filter(User.email == "admin@admin.com").first()
         if not admin_user:
             return None
@@ -73,7 +71,6 @@ class AuthService:
         if not user:
             return None
         
-        # Create access token
         access_token = create_access_token(data={"sub": str(user.id)})
         
         return {

@@ -6,10 +6,10 @@ import uvicorn
 from app.core.config import settings
 
 if __name__ == "__main__":
-    print("🚀 Iniciando FastAPI Server...")
-    print(f"📡 API será executada em: http://localhost:3001")
-    print(f"📚 Documentação em: http://localhost:3001/docs")
-    print("🔧 Para parar o servidor: Ctrl+C")
+    print("Iniciando FastAPI Server...")
+    print(f"API será executada em: http://localhost:3001")
+    print(f"Documentação em: http://localhost:3001/docs")
+    print("Para parar o servidor: Ctrl+C")
     print("-" * 50)
     
     uvicorn.run(

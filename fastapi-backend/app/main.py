@@ -8,7 +8,6 @@ from .api.v1.endpoints import atividades, setores
 from fastapi import Depends
 from .api.deps import get_current_active_user
 from .models.user import User
-# Import all models to ensure tables are created
 from .models import (
     User, Project, Atividade, Setor, Documento, CasaParceira,
     RelatorioDiario, CredencialAcesso, MetricasRedesSociais,
@@ -27,7 +26,6 @@ import uuid
 import os
 from .api.deps import get_current_admin_user
 
-# Create FastAPI app
 app = FastAPI(
     title=settings.project_name,
     version=settings.project_version,
@@ -37,7 +35,7 @@ app = FastAPI(
 )
 
 # Set up CORS FIRST (antes de outras middlewares)
-# IMPORTANTE: Não pode usar allow_origins=["*"] com allow_credentials=True
+# Não pode usar allow_origins=["*"] com allow_credentials=True
 # Precisamos especificar as origens explicitamente
 import os
 cors_origins = [
@@ -47,7 +45,6 @@ cors_origins = [
     "http://127.0.0.1:3001",
 ]
 
-# Adicionar origens do Railway se existirem
 railway_public_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN")
 if railway_public_domain:
     cors_origins.extend([
@@ -55,12 +52,10 @@ if railway_public_domain:
         f"http://{railway_public_domain}",
     ])
 
-# Adicionar variável de ambiente para CORS customizado (frontend)
 custom_cors = os.getenv("CORS_ORIGINS")
 if custom_cors:
     cors_origins.extend([origin.strip() for origin in custom_cors.split(",")])
 
-# Adicionar domínio do frontend se configurado
 frontend_url = os.getenv("FRONTEND_URL")
 if frontend_url:
     cors_origins.extend([
@@ -77,12 +72,10 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# Handle preflight requests
 @app.options("/{full_path:path}")
 async def preflight_handler(full_path: str):
     return {"message": "OK"}
 
-# Criar diretório de uploads se não existir
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -137,7 +130,6 @@ async def get_project_legacy(
 # Import setores router - usar /api/v1/setores ao invés
 # app.include_router(setores.router, prefix="/api/setores", tags=["setores-legacy"])  # Desabilitado - use /api/v1/setores
 
-# Add simple endpoints for other legacy routes that the frontend expects
 @app.get("/api/campaigns")
 @app.get("/api/campaigns/")
 async def get_campaigns(current_user: User = Depends(get_current_active_user)):
@@ -218,7 +210,6 @@ async def create_user_post(
     from .services.user_service import UserService
     from .schemas.user import UserCreate
     
-    # Convert frontend data format to internal format
     if "name" in user_data:
         # Frontend format: name -> name + generate username
         name = user_data.get("name", "")
@@ -234,7 +225,6 @@ async def create_user_post(
             "is_admin": user_data.get("role") == "admin"
         }
         
-        # Handle setorId - convert to UUID if provided and not "none"
         setor_id = user_data.get("setorId")
         if setor_id and setor_id != "none":
             try:
@@ -248,7 +238,6 @@ async def create_user_post(
         # Standard API format
         user = UserCreate(**user_data)
     
-    # Check if user already exists
     db_user = UserService.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -267,7 +256,6 @@ async def create_user_post(
         "is_admin": created_user.is_admin
     }
 
-# Add debug endpoint
 @app.get("/api/debug/headers")
 async def debug_headers(request: Request):
     """Debug endpoint to check headers"""
@@ -354,13 +342,12 @@ async def debug_setores_auth(request: Request):
 @app.on_event("startup")
 async def startup_event():
     """Startup event handler"""
-    print("🚀 Iniciando Sistemaxi API...")
+    print("Iniciando Sistemaxi API...")
     
     # Test database connection
     if test_connection():
-        # Create tables if they don't exist
         create_tables()
-        print("📊 Tabelas do banco criadas/verificadas com sucesso!")
+        print("Tabelas do banco criadas/verificadas com sucesso!")
 
         # Ensure a default admin exists for local/dev usage (does not populate business data)
         try:
@@ -377,22 +364,21 @@ async def startup_event():
                     )
                     db.add(admin_user)
                     db.commit()
-                    print("✅ Usuário admin padrão criado (admin@sistemaxi.com / admin1234)")
+                    print("Usuário admin padrão criado (admin@sistemaxi.com / admin1234)")
             finally:
                 db.close()
         except Exception as e:
-            print(f"⚠️  Falha ao garantir admin padrão: {e}")
+            print(f"Falha ao garantir admin padrão: {e}")
     else:
-        print("⚠️  Falha na conexão com banco de dados! A aplicação continuará, mas algumas funcionalidades podem não funcionar.")
+        print("Falha na conexão com banco de dados! A aplicação continuará, mas algumas funcionalidades podem não funcionar.")
         # Não fazer exit(1) para permitir que a API inicie mesmo sem banco
     
-    # Get port from environment (Railway provides PORT)
     port = os.getenv("PORT", "3001")
     public_url = os.getenv("RAILWAY_PUBLIC_DOMAIN", f"localhost:{port}")
     protocol = "https" if os.getenv("RAILWAY_ENVIRONMENT") else "http"
     
-    print(f"✅ API rodando em: {protocol}://{public_url}")
-    print(f"📚 Documentação em: {protocol}://{public_url}/docs")
+    print(f"API rodando em: {protocol}://{public_url}")
+    print(f"Documentação em: {protocol}://{public_url}/docs")
 
 
 @app.get("/")
@@ -421,7 +407,6 @@ async def init_database_endpoint(secret: str = None):
     Ou sem secret (apenas para desenvolvimento):
     https://sistemaxi.up.railway.app/api/init-database
     """
-    # Verificar secret se configurado (opcional, mas recomendado)
     init_secret = os.getenv("INIT_DATABASE_SECRET")
     if init_secret and secret != init_secret:
         raise HTTPException(
@@ -434,14 +419,12 @@ async def init_database_endpoint(secret: str = None):
         if not test_connection():
             return {
                 "success": False,
-                "message": "❌ Erro na conexão com banco de dados!",
+                "message": "Erro na conexão com banco de dados!",
                 "error": "Não foi possível conectar ao banco de dados"
             }
         
-        # Create tables
         create_tables()
         
-        # Create admin user if not exists
         db = SessionLocal()
         try:
             admin_user = db.query(User).filter(
@@ -466,7 +449,7 @@ async def init_database_endpoint(secret: str = None):
             db.rollback()
             return {
                 "success": False,
-                "message": "⚠️ Erro ao criar usuário admin",
+                "message": "Erro ao criar usuário admin",
                 "error": str(e),
                 "tables_created": True
             }
@@ -475,7 +458,7 @@ async def init_database_endpoint(secret: str = None):
         
         return {
             "success": True,
-            "message": "🎉 Banco de dados inicializado com sucesso!",
+            "message": "Banco de dados inicializado com sucesso!",
             "tables_created": True,
             "admin_user_created": admin_created,
             "admin_credentials": {
@@ -491,7 +474,7 @@ async def init_database_endpoint(secret: str = None):
     except Exception as e:
         return {
             "success": False,
-            "message": "❌ Erro ao inicializar banco de dados",
+            "message": "Erro ao inicializar banco de dados",
             "error": str(e)
         }
 
@@ -508,7 +491,6 @@ async def get_atividades_legacy(
     
     atividades = AtividadeService.get_atividades(db, user_id=current_user.id, skip=0, limit=1000)
     
-    # Convert to frontend format
     result = []
     for atividade in atividades:
         atividade_data = {
@@ -524,7 +506,6 @@ async def get_atividades_legacy(
             "updatedAt": atividade.updated_at.isoformat() if atividade.updated_at else None,
         }
         
-        # Add nested objects if requested
         if "projeto" in include and atividade.projeto:
             atividade_data["projeto"] = {
                 "id": str(atividade.projeto.id),
@@ -560,11 +541,6 @@ async def get_atividade_legacy(
     from .services.atividade_service import AtividadeService
     import uuid
     
-    # Debug: log da requisição
-    print(f"DEBUG - Buscando atividade {atividade_id}")
-    print(f"DEBUG - User: {current_user.id if current_user else 'None'}")
-    print(f"DEBUG - Authorization header: {request.headers.get('authorization', 'None')}")
-    
     try:
         atividade_uuid = uuid.UUID(atividade_id)
     except ValueError:
@@ -589,7 +565,6 @@ async def create_atividade_legacy(
     from .services.atividade_service import AtividadeService
     import uuid
     
-    # Convert frontend field names to backend field names
     converted_data = {
         "nome": atividade_data.get("nome"),
         "descricao": atividade_data.get("descricao"),
@@ -600,7 +575,6 @@ async def create_atividade_legacy(
         "setor_id": None
     }
     
-    # Convert IDs
     if atividade_data.get("projetoId"):
         try:
             converted_data["projeto_id"] = uuid.UUID(atividade_data["projetoId"])
@@ -623,11 +597,9 @@ async def create_atividade_legacy(
         if current_user.setor_id:
             converted_data["setor_id"] = current_user.setor_id
     
-    # Create atividade with converted data
     atividade = AtividadeCreate(**converted_data)
     created_atividade = AtividadeService.create_atividade(db=db, atividade=atividade)
     
-    # Convert response back to frontend format
     response_data = {
         "id": str(created_atividade.id),
         "nome": created_atividade.nome,
@@ -674,14 +646,12 @@ async def update_atividade_legacy(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid atividade ID format")
     
-    # Check if atividade exists
     atividade = AtividadeService.get_atividade(db, atividade_id=atividade_uuid)
     if atividade is None:
         raise HTTPException(status_code=404, detail="Atividade not found")
     
     # All authenticated users can update atividades
     
-    # Convert frontend field names to backend field names
     converted_data = {}
     
     if "nome" in atividade_data:
@@ -693,7 +663,6 @@ async def update_atividade_legacy(
     if "prioridade" in atividade_data:
         converted_data["prioridade"] = atividade_data["prioridade"]
     
-    # Convert IDs
     if "projetoId" in atividade_data:
         if atividade_data["projetoId"]:
             try:
@@ -721,13 +690,11 @@ async def update_atividade_legacy(
         else:
             converted_data["setor_id"] = None
     
-    # Update atividade with converted data
     atividade_update = AtividadeUpdate(**converted_data)
     updated_atividade = AtividadeService.update_atividade(
         db, atividade_id=atividade_uuid, atividade_update=atividade_update
     )
     
-    # Convert response back to frontend format
     response_data = {
         "id": str(updated_atividade.id),
         "nome": updated_atividade.nome,
@@ -772,7 +739,6 @@ async def delete_atividade_legacy(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid atividade ID format")
     
-    # Check if atividade exists
     atividade = AtividadeService.get_atividade(db, atividade_id=atividade_uuid)
     if atividade is None:
         raise HTTPException(status_code=404, detail="Atividade not found")

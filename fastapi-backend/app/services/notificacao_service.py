@@ -175,7 +175,6 @@ class NotificacaoService:
         if usuario.is_admin:
             return True
         
-        # Verificar se é gestor de projeto (owner de algum projeto)
         from ..models.project import Project
         projeto_count = db.query(Project).filter(Project.owner_id == usuario_id).count()
         return projeto_count > 0

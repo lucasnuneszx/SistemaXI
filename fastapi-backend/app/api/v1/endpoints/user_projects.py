@@ -42,7 +42,6 @@ def serialize_user_project(user_project, db: Session = None) -> UserProjectRespo
         
         # Fallback: serializar sem relacionamentos se não conseguir carregar
         if not project_dict:
-            # Criar um dict manualmente sem o owner para evitar erro
             project_dict = {
                 "id": user_project.project.id,
                 "name": user_project.project.name,
@@ -77,7 +76,6 @@ def assign_user_to_project(
     current_user: User = Depends(get_current_user)
 ):
     """Atribuir usuário a um projeto (apenas admins e project managers)"""
-    # Verificar se o usuário atual pode gerenciar este projeto
     if not UserProjectService.user_can_manage_project(db, current_user.id, project_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -110,7 +108,6 @@ def remove_user_from_project(
     current_user: User = Depends(get_current_user)
 ):
     """Remover usuário de um projeto (apenas admins e project managers)"""
-    # Verificar se o usuário atual pode gerenciar este projeto
     if not UserProjectService.user_can_manage_project(db, current_user.id, project_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -135,7 +132,6 @@ def get_project_users(
     current_user: User = Depends(get_current_user)
 ):
     """Listar usuários de um projeto"""
-    # Verificar se o usuário tem acesso ao projeto
     if not UserProjectService.user_has_access_to_project(db, current_user.id, project_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

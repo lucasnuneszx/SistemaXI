@@ -21,20 +21,16 @@ class CriativoService:
 
     def create_criativo(self, criativo_data: CriativoCreate, user_id: UUID, user_is_admin: bool = False) -> CriativoResponse:
         """Criar novo criativo"""
-        # Converter dados para o formato do DB
         data_dict = criativo_data.model_dump(by_alias=True, exclude_unset=True)
         
-        # Mapear prioridade para inteiro
         if 'prioridade' in data_dict:
             prioridade_str = data_dict['prioridade']
             data_dict['prioridade'] = PRIORIDADE_REVERSE_MAP.get(prioridade_str, 2)
         
-        # Mapear campos com nomes diferentes
         if 'titulo' in data_dict:
             data_dict['nome'] = data_dict.pop('titulo')
         if 'tipo_arquivo' in data_dict:
             tipo_str = data_dict.pop('tipo_arquivo')
-            # Converter string para enum
             try:
                 data_dict['tipo'] = TipoArquivo(tipo_str)
             except ValueError:
@@ -55,7 +51,6 @@ class CriativoService:
                     raise ValueError("Usuário não possui projetos atribuídos. Contate um administrador.")
                 data_dict['projeto_id'] = owned_project.id
             else:
-                # Usar o primeiro projeto atribuído
                 data_dict['projeto_id'] = user_projects[0].project_id
         else:
             # Para admins, projeto_id deve vir no payload
@@ -120,21 +115,17 @@ class CriativoService:
             # Admin pode ver todos os criativos
             return self.get_criativos(projeto_id, status, tipo_arquivo, skip, limit)
         
-        # Buscar projetos acessíveis ao usuário
         accessible_projects = UserProjectService.get_user_projects(self.db, user_id)
         accessible_project_ids = [up.project_id for up in accessible_projects]
         
-        # Adicionar projetos que o usuário possui
         owned_projects = self.db.query(Project).filter(Project.owner_id == user_id).all()
         accessible_project_ids.extend([p.id for p in owned_projects])
         
-        # Remover duplicatas
         accessible_project_ids = list(set(accessible_project_ids))
         
         if not accessible_project_ids:
             return []
         
-        # Filtrar criativos apenas dos projetos acessíveis
         query = self.db.query(Criativo).filter(Criativo.projeto_id.in_(accessible_project_ids))
         
         if projeto_id and projeto_id in accessible_project_ids:
@@ -162,20 +153,16 @@ class CriativoService:
         if not criativo:
             return None
         
-        # Converter dados para o formato do DB
         update_data = criativo_data.model_dump(by_alias=True, exclude_unset=True)
         
-        # Mapear prioridade para inteiro
         if 'prioridade' in update_data:
             prioridade_str = update_data['prioridade']
             update_data['prioridade'] = PRIORIDADE_REVERSE_MAP.get(prioridade_str, 2)
         
-        # Mapear campos com nomes diferentes
         if 'titulo' in update_data:
             update_data['nome'] = update_data.pop('titulo')
         if 'tipo_arquivo' in update_data:
             tipo_str = update_data.pop('tipo_arquivo')
-            # Converter string para enum
             try:
                 update_data['tipo'] = TipoArquivo(tipo_str)
             except ValueError:
@@ -223,7 +210,6 @@ class CriativoService:
         
         criativos = query.all()
         
-        # Agrupar por status
         kanban_data = {
             "material_cru": [],
             "em_edicao": [],
@@ -248,15 +234,12 @@ class CriativoService:
         if user_is_admin:
             return self.get_kanban_view(projeto_id)
         
-        # Buscar projetos acessíveis ao usuário
         accessible_projects = UserProjectService.get_user_projects(self.db, user_id)
         accessible_project_ids = [up.project_id for up in accessible_projects]
         
-        # Adicionar projetos que o usuário possui
         owned_projects = self.db.query(Project).filter(Project.owner_id == user_id).all()
         accessible_project_ids.extend([p.id for p in owned_projects])
         
-        # Remover duplicatas
         accessible_project_ids = list(set(accessible_project_ids))
         
         if not accessible_project_ids:
@@ -264,7 +247,6 @@ class CriativoService:
                 material_cru=[], em_edicao=[], aguardando_revisao=[], aprovado=[], rejeitado=[]
             )
         
-        # Filtrar criativos apenas dos projetos acessíveis
         query = self.db.query(Criativo).filter(Criativo.projeto_id.in_(accessible_project_ids))
         
         if projeto_id and projeto_id in accessible_project_ids:
@@ -272,7 +254,6 @@ class CriativoService:
         
         criativos = query.all()
         
-        # Agrupar por status
         kanban_data = {
             "material_cru": [],
             "em_edicao": [],
@@ -303,7 +284,6 @@ class CriativoService:
             func.count(Criativo.id).label('count')
         ).group_by(Criativo.status).all()
         
-        # Inicializar contadores
         stats = {
             "total": total,
             "material_cru": 0,
@@ -329,15 +309,12 @@ class CriativoService:
         if user_is_admin:
             return self.get_stats(projeto_id)
         
-        # Buscar projetos acessíveis ao usuário
         accessible_projects = UserProjectService.get_user_projects(self.db, user_id)
         accessible_project_ids = [up.project_id for up in accessible_projects]
         
-        # Adicionar projetos que o usuário possui
         owned_projects = self.db.query(Project).filter(Project.owner_id == user_id).all()
         accessible_project_ids.extend([p.id for p in owned_projects])
         
-        # Remover duplicatas
         accessible_project_ids = list(set(accessible_project_ids))
         
         if not accessible_project_ids:
@@ -345,7 +322,6 @@ class CriativoService:
                 total=0, material_cru=0, em_edicao=0, aguardando_revisao=0, aprovado=0, rejeitado=0
             )
         
-        # Filtrar criativos apenas dos projetos acessíveis
         query = self.db.query(Criativo).filter(Criativo.projeto_id.in_(accessible_project_ids))
         
         if projeto_id and projeto_id in accessible_project_ids:
@@ -360,7 +336,6 @@ class CriativoService:
             func.count(Criativo.id).label('count')
         ).group_by(Criativo.status).all()
         
-        # Inicializar contadores
         stats = {
             "total": total,
             "material_cru": 0,
@@ -388,7 +363,6 @@ class CriativoService:
         if not criativo:
             return None
         
-        # Validar transições de status (pode ser expandido com regras de negócio)
         valid_transitions = {
             StatusCriativo.MATERIAL_CRU: [StatusCriativo.EM_EDICAO],
             StatusCriativo.EM_EDICAO: [StatusCriativo.AGUARDANDO_REVISAO, StatusCriativo.MATERIAL_CRU],
@@ -402,12 +376,10 @@ class CriativoService:
             # Se a transição não for válida, ainda permitir (pode ser necessário pular etapas)
             pass
         
-        # Atualizar status
         criativo.status = new_status
         criativo.editor_id = user_id
         criativo.updated_at = datetime.utcnow()
         
-        # Atualizar datas específicas
         if new_status == StatusCriativo.EM_EDICAO and not criativo.data_inicio_edicao:
             criativo.data_inicio_edicao = datetime.utcnow()
         elif new_status in [StatusCriativo.APROVADO, StatusCriativo.REJEITADO]:

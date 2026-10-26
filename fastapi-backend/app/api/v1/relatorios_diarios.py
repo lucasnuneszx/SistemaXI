@@ -28,7 +28,6 @@ def create_relatorio(
     """Criar um novo relatório diário"""
     service = RelatorioDiarioService(db)
     
-    # Verificar se já existe relatório para essa data
     existing = service.get_relatorio_by_projeto_and_data(
         relatorio.projeto_id, 
         relatorio.data_referente

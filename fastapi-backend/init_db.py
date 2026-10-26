@@ -9,18 +9,16 @@ from app.models.user import User
 
 def init_database():
     """Initialize database with tables and admin user"""
-    print("🔧 Inicializando banco de dados...")
+    print("Inicializando banco de dados...")
     
     # Test connection
     if not test_connection():
-        print("❌ Erro na conexão com banco!")
+        print("Erro na conexão com banco!")
         return False
     
-    # Create tables
     create_tables()
-    print("✅ Tabelas criadas com sucesso!")
+    print("Tabelas criadas com sucesso!")
     
-    # Create admin user if not exists
     db = SessionLocal()
     try:
         admin_user = db.query(User).filter(User.email == "admin@admin.com").first()
@@ -34,16 +32,16 @@ def init_database():
             )
             db.add(admin_user)
             db.commit()
-            print("✅ Usuário admin criado: admin@admin.com / admin")
+            print("Usuário admin criado: admin@admin.com / admin")
         else:
-            print("ℹ️  Usuário admin já existe")
+            print("Usuário admin já existe")
     except Exception as e:
-        print(f"❌ Erro ao criar usuário admin: {e}")
+        print(f"Erro ao criar usuário admin: {e}")
         db.rollback()
     finally:
         db.close()
     
-    print("🎉 Banco de dados inicializado com sucesso!")
+    print("Banco de dados inicializado com sucesso!")
     return True
 
 if __name__ == "__main__":

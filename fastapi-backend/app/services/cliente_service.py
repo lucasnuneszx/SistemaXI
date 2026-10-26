@@ -33,15 +33,13 @@ class ClienteService:
         """Create new cliente"""
         try:
             cliente_data = cliente.model_dump() if hasattr(cliente, 'model_dump') else cliente.dict()
-            print(f"📝 Criando cliente com dados: {cliente_data}")
             db_cliente = Cliente(**cliente_data)
             db.add(db_cliente)
             db.commit()
             db.refresh(db_cliente)
-            print(f"✅ Cliente criado com sucesso: {db_cliente.id}")
             return db_cliente
         except Exception as e:
-            print(f"❌ Erro ao criar cliente: {e}")
+            print(f"Erro ao criar cliente: {e}")
             db.rollback()
             raise
     

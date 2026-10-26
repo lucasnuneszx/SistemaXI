@@ -64,7 +64,6 @@ def upgrade():
             );
         """))
         
-        # Criar índices para melhor performance
         conn.execute(text("""
             CREATE INDEX IF NOT EXISTS idx_relatorios_diarios_projeto_id ON relatorios_diarios(projeto_id);
         """))
@@ -78,7 +77,7 @@ def upgrade():
         """))
         
         conn.commit()
-        print("✅ Tabela relatorios_diarios criada com sucesso!")
+        print("Tabela relatorios_diarios criada com sucesso!")
 
 
 def downgrade():
@@ -87,7 +86,7 @@ def downgrade():
     with engine.connect() as conn:
         conn.execute(text("DROP TABLE IF EXISTS relatorios_diarios CASCADE;"))
         conn.commit()
-        print("✅ Tabela relatorios_diarios removida com sucesso!")
+        print("Tabela relatorios_diarios removida com sucesso!")
 
 
 if __name__ == "__main__":

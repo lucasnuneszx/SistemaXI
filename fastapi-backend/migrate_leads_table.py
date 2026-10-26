@@ -15,13 +15,11 @@ def migrate_leads_table():
     
     with engine.connect() as conn:
         try:
-            # Verificar se as colunas já existem
             inspector = __import__('sqlalchemy', fromlist=['inspect']).inspect(engine)
             existing_columns = [col['name'] for col in inspector.get_columns('leads')]
             
             print("Colunas existentes:", existing_columns)
             
-            # Adicionar colunas que faltam
             if 'status' not in existing_columns:
                 print("Adicionando coluna 'status'...")
                 conn.execute(text("""
@@ -47,7 +45,6 @@ def migrate_leads_table():
                 conn.commit()
             
             if 'observacoes' not in existing_columns:
-                # Verificar se 'descricao' existe e pode ser renomeada
                 if 'descricao' in existing_columns:
                     print("Renomeando 'descricao' para 'observacoes'...")
                     conn.execute(text("""
@@ -99,7 +96,6 @@ def migrate_leads_table():
                     else:
                         stage_mapping[val] = 'FREE'
                 
-                # Atualizar status baseado no stage
                 for enum_val, status_val in stage_mapping.items():
                     conn.execute(text(f"""
                         UPDATE leads 
@@ -118,10 +114,10 @@ def migrate_leads_table():
                 """))
                 conn.commit()
             
-            print("✅ Migração concluída com sucesso!")
+            print("Migração concluída com sucesso!")
             
         except Exception as e:
-            print(f"❌ Erro na migração: {e}")
+            print(f"Erro na migração: {e}")
             import traceback
             traceback.print_exc()
             conn.rollback()

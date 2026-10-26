@@ -21,7 +21,6 @@ class KanbanColumnService:
     @staticmethod
     def create_column(db: Session, column: KanbanColumnCreate) -> KanbanColumn:
         """Create new column"""
-        # Get max order
         max_order = db.query(KanbanColumn).count()
         column_data = column.dict()
         column_data['order'] = max_order

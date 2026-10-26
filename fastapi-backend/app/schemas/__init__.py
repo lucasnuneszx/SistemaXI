@@ -43,7 +43,6 @@ UserResponse.model_rebuild()
 SetorResponse.model_rebuild()
 CriativoResponse.model_rebuild()
 
-# Import after all schemas are defined to resolve forward references
 from .lead import LeadResponse
 from .kanban_column import KanbanColumnResponse
 
@@ -51,4 +50,3 @@ from .kanban_column import KanbanColumnResponse
 KanbanColumnResponse.model_rebuild()
 
 # No need to print here anymore, was for initial debugging
-# print("Schemas rebuilt") 

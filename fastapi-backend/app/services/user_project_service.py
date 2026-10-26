@@ -18,29 +18,24 @@ class UserProjectService:
         role: ProjectRole = ProjectRole.CREATIVE_USER
     ) -> UserProject:
         """Atribuir usuário a um projeto com role específica"""
-        # Verificar se usuário existe
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise ValueError(f"Usuário com ID {user_id} não encontrado")
         
-        # Verificar se projeto existe
         project = db.query(Project).filter(Project.id == project_id).first()
         if not project:
             raise ValueError(f"Projeto com ID {project_id} não encontrado")
         
-        # Verificar se já existe
         existing = db.query(UserProject).filter(
             UserProject.user_id == user_id,
             UserProject.project_id == project_id
         ).first()
         
         if existing:
-            # Atualizar role se já existir
             existing.role = role
             db.commit()
             db.refresh(existing)
             
-            # Carregar relacionamentos
             existing = db.query(UserProject).options(
                 joinedload(UserProject.user),
                 joinedload(UserProject.project)
@@ -48,7 +43,6 @@ class UserProjectService:
             
             return existing
         
-        # Criar nova atribuição
         user_project = UserProject(
             user_id=user_id,
             project_id=project_id,
@@ -59,7 +53,6 @@ class UserProjectService:
         db.commit()
         db.refresh(user_project)
         
-        # Carregar relacionamentos para garantir que estejam disponíveis
         user_project = db.query(UserProject).options(
             joinedload(UserProject.user),
             joinedload(UserProject.project)
@@ -119,7 +112,6 @@ class UserProjectService:
         if project and project.owner_id == user_id:
             return True
         
-        # Verificar atribuição específica
         user_project = db.query(UserProject).filter(
             UserProject.user_id == user_id,
             UserProject.project_id == project_id

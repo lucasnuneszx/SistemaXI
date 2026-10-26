@@ -12,7 +12,7 @@ from ....models.user import User
 
 router = APIRouter()
 
-# IMPORTANTE: GET deve vir ANTES de POST para evitar conflitos de roteamento
+# GET deve vir ANTES de POST para evitar conflitos de roteamento
 @router.get("/", response_model=List[schemas.DocumentoResponse])
 @router.get("", response_model=List[schemas.DocumentoResponse])  # Suporte para rota sem trailing slash
 def list_documentos(
@@ -37,7 +37,7 @@ def list_documentos(
         try:
             doc_response.url = minio_service.get_download_url(db_doc.key)
         except Exception as e:
-            print(f"Error generating download URL for {db_doc.key}: {e}") # Replace with proper logging
+            print(f"Error generating download URL for {db_doc.key}: {e}")
             doc_response.url = None # Or some placeholder indicating an error
         response_docs.append(doc_response)
     return response_docs
@@ -85,7 +85,7 @@ def create_documento_entry(
     except Exception as e:
         # If URL generation fails, still return the doc info but log the error
         # Or, you could raise an error if the URL is critical for the response
-        print(f"Error generating download URL for {db_documento.key}: {e}") # Replace with proper logging
+        print(f"Error generating download URL for {db_documento.key}: {e}")
         return schemas.DocumentoResponse.model_validate(db_documento)
 
 @router.get("/{documento_id}", response_model=schemas.DocumentoResponse)

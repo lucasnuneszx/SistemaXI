@@ -35,7 +35,6 @@ def read_atividades_by_projeto(
     """Get atividades by projeto ID - accessible to all authenticated users"""
     from ....models.project import Project
     
-    # Check if project exists
     projeto = db.query(Project).filter(Project.id == projeto_id).first()
     if not projeto:
         raise HTTPException(status_code=404, detail="Projeto not found")
@@ -80,7 +79,6 @@ def update_atividade(
     current_user: User = Depends(get_current_active_user)
 ):
     """Update atividade - accessible to all authenticated users"""
-    # Check if atividade exists
     atividade = AtividadeService.get_atividade(db, atividade_id=atividade_id)
     if atividade is None:
         raise HTTPException(status_code=404, detail="Atividade not found")
@@ -99,7 +97,6 @@ def delete_atividade(
     current_user: User = Depends(get_current_active_user)
 ):
     """Delete atividade - accessible to all authenticated users"""
-    # Check if atividade exists
     atividade = AtividadeService.get_atividade(db, atividade_id=atividade_id)
     if atividade is None:
         raise HTTPException(status_code=404, detail="Atividade not found")

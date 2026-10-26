@@ -54,7 +54,6 @@ def read_projects(
     projects = ProjectService.get_user_accessible_projects(
         db, user_id=current_user.id, is_admin=current_user.is_admin
     )
-    # Carregar relacionamentos e serializar
     project_ids = [p.id for p in projects]
     projects_with_relations = db.query(Project).options(
         joinedload(Project.owner)
@@ -92,7 +91,6 @@ def create_project(
     created_project = ProjectService.create_project(
         db=db, project=project, owner_id=current_user.id
     )
-    # Carregar relacionamentos e serializar
     project_with_relations = db.query(Project).options(
         joinedload(Project.owner)
     ).filter(Project.id == created_project.id).first()
@@ -108,7 +106,6 @@ def update_project(
     current_user: User = Depends(get_current_active_user)
 ):
     """Update project - only owners and admins can modify"""
-    # Check if project exists and user has permission
     project = ProjectService.get_project(db, project_id=project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -132,7 +129,6 @@ def delete_project(
     current_user: User = Depends(get_current_active_user)
 ):
     """Delete project - only owners and admins can delete"""
-    # Check if project exists and user has permission
     project = ProjectService.get_project(db, project_id=project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")

@@ -7,13 +7,12 @@ from app.core.database import engine
 
 def add_casas_parceiras_table():
     """Add casas_parceiras table to database"""
-    print("🔧 Adicionando tabela de casas parceiras...")
+    print("Adicionando tabela de casas parceiras...")
     
     try:
         with engine.connect() as connection:
             with connection.begin():
-                # Create the casas_parceiras table
-                print("📝 Criando tabela casas_parceiras...")
+                print("Criando tabela casas_parceiras...")
                 connection.execute(text("""
                     CREATE TABLE IF NOT EXISTS casas_parceiras (
                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -36,21 +35,18 @@ def add_casas_parceiras_table():
                     );
                 """))
                 
-                # Create index on projeto_id for performance
-                print("📝 Criando índices...")
+                print("Criando índices...")
                 connection.execute(text("""
                     CREATE INDEX IF NOT EXISTS idx_casas_parceiras_projeto_id 
                     ON casas_parceiras(projeto_id);
                 """))
                 
-                # Create index on slug for public access
                 connection.execute(text("""
                     CREATE INDEX IF NOT EXISTS idx_casas_parceiras_slug 
                     ON casas_parceiras(slug);
                 """))
                 
-                # Create updated_at trigger
-                print("📝 Criando trigger para updated_at...")
+                print("Criando trigger para updated_at...")
                 connection.execute(text("""
                     CREATE OR REPLACE FUNCTION update_updated_at_column()
                     RETURNS TRIGGER AS $$
@@ -69,12 +65,12 @@ def add_casas_parceiras_table():
                         EXECUTE FUNCTION update_updated_at_column();
                 """))
                 
-        print("✅ Tabela casas_parceiras criada com sucesso!")
-        print("🎉 Agora você pode gerenciar casas parceiras e gerar links com UTM!")
+        print("Tabela casas_parceiras criada com sucesso!")
+        print("Agora você pode gerenciar casas parceiras e gerar links com UTM!")
         return True
         
     except Exception as e:
-        print(f"❌ Erro ao criar tabela casas_parceiras: {e}")
+        print(f"Erro ao criar tabela casas_parceiras: {e}")
         return False
 
 if __name__ == "__main__":

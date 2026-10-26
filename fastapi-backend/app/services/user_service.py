@@ -12,7 +12,6 @@ class UserService:
     @staticmethod
     def get_user(db: Session, user_id: Union[str, uuid.UUID]) -> Optional[User]:
         """Get user by ID with setor loaded"""
-        # Converter string para UUID se necessário
         if isinstance(user_id, str):
             try:
                 user_id = uuid.UUID(user_id)
@@ -64,7 +63,6 @@ class UserService:
         
         update_data = user_update.model_dump(exclude_unset=True)
         
-        # Handle password update
         if "password" in update_data:
             update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
         
@@ -84,7 +82,6 @@ class UserService:
             return False
         
         try:
-            # Verificar se o usuário é owner de projetos
             from ..models.project import Project
             owned_projects = db.query(Project).filter(Project.owner_id == db_user.id).count()
             if owned_projects > 0:
@@ -92,11 +89,9 @@ class UserService:
                 # Alternativa: transferir ownership ou marcar como inativo
                 raise ValueError(f"Não é possível excluir usuário que é responsável por {owned_projects} projeto(s). Considere desativar o usuário ao invés de excluí-lo.")
             
-            # Verificar se o usuário tem atividades atribuídas
             from ..models.atividade import Atividade
             atividades_count = db.query(Atividade).filter(Atividade.responsavel_id == db_user.id).count()
             if atividades_count > 0:
-                # Remover responsabilidade das atividades antes de excluir
                 db.query(Atividade).filter(Atividade.responsavel_id == db_user.id).update({"responsavel_id": None})
             
             # Buscar um usuário admin padrão para transferir leads e criativos
@@ -134,14 +129,12 @@ class UserService:
                     {"criado_por_id": admin_user.id}
                 )
             
-            # Remover referência de criativos editados pelo usuário (pode ser NULL)
             criativos_editados_count = db.query(Criativo).filter(Criativo.editor_id == db_user.id).count()
             if criativos_editados_count > 0:
                 db.query(Criativo).filter(Criativo.editor_id == db_user.id).update(
                     {"editor_id": None}
                 )
             
-            # Remover referência de transações financeiras criadas pelo usuário (pode ser NULL)
             from ..models.finance_transaction import FinanceTransaction
             transacoes_count = db.query(FinanceTransaction).filter(
                 FinanceTransaction.criado_por_id == db_user.id

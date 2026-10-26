@@ -46,21 +46,18 @@ class Settings(BaseSettings):
     minio_use_ssl: bool = Field(default=True, alias="MINIO_USE_SSL")
 
 
-# Create global settings instance
 settings = Settings()
 
 # FORÇAR leitura de DATABASE_URL do ambiente (Railway tem prioridade)
 env_database_url = os.getenv("DATABASE_URL")
 if env_database_url:
-    # Limpar '=' no início se existir
     if env_database_url.startswith('='):
         env_database_url = env_database_url[1:].strip()
     # Forçar uso da variável de ambiente
     settings.database_url = env_database_url
-    print(f"🔧 DATABASE_URL lida do ambiente: {env_database_url[:30]}...")
+    print(f"DATABASE_URL lida do ambiente: {env_database_url[:30]}...")
 else:
-    print(f"⚠️  DATABASE_URL não encontrada no ambiente, usando: {settings.database_url}")
+    print(f"DATABASE_URL não encontrada no ambiente, usando: {settings.database_url}")
 
-# Limpar DATABASE_URL se tiver '=' no início (correção para Railway)
 if settings.database_url and settings.database_url.startswith('='):
     settings.database_url = settings.database_url[1:].strip() 

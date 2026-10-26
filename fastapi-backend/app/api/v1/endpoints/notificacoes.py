@@ -66,14 +66,12 @@ def criar_notificacao(
     current_user: User = Depends(get_current_active_user)
 ):
     """Criar uma notificação (apenas admin ou gestor de projeto)"""
-    # Verificar permissão
     if not NotificacaoService.verificar_permissao_criar(db, current_user.id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Apenas administradores e gestores de projeto podem criar notificações"
         )
     
-    # Validar que usuario_id foi fornecido
     if not notificacao.usuario_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -89,7 +87,6 @@ def criar_notificacao(
         from_user_id=from_user_id
     )
     
-    # Carregar relacionamentos
     db_notificacao = db.query(Notificacao).options(
         joinedload(Notificacao.from_user)
     ).filter(Notificacao.id == db_notificacao.id).first()
@@ -105,7 +102,6 @@ def criar_notificacao_multiplos(
     current_user: User = Depends(get_current_active_user)
 ):
     """Criar notificações para múltiplos usuários (apenas admin ou gestor de projeto)"""
-    # Verificar permissão
     if not NotificacaoService.verificar_permissao_criar(db, current_user.id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -127,7 +123,6 @@ def criar_notificacao_multiplos(
         from_user_id=from_user_id
     )
     
-    # Carregar relacionamentos
     notif_ids = [n.id for n in db_notificacoes]
     notificacoes_com_relacoes = db.query(Notificacao).options(
         joinedload(Notificacao.from_user)
@@ -154,7 +149,6 @@ def listar_notificacoes(
         apenas_nao_lidas=apenas_nao_lidas
     )
     
-    # Carregar relacionamentos
     notif_ids = [n.id for n in notificacoes]
     notificacoes_com_relacoes = db.query(Notificacao).options(
         joinedload(Notificacao.from_user)
@@ -195,7 +189,6 @@ def marcar_como_lida(
             detail="Notificação não encontrada"
         )
     
-    # Carregar relacionamentos
     notificacao = db.query(Notificacao).options(
         joinedload(Notificacao.from_user)
     ).filter(Notificacao.id == notificacao.id).first()

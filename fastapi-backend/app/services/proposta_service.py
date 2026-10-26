@@ -28,7 +28,6 @@ class PropostaService:
         proposta_data = proposta.model_dump() if hasattr(proposta, 'model_dump') else proposta.dict()
         if not proposta_data.get('data_criacao'):
             proposta_data['data_criacao'] = datetime.utcnow()
-        # Get max order
         max_order = db.query(Proposta).count()
         proposta_data['ordem'] = max_order
         db_proposta = Proposta(**proposta_data)

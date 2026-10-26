@@ -22,7 +22,6 @@ def read_user_me(current_user: User = Depends(get_current_active_user)):
     # Generate presigned URL for photo if available
     if response.foto_perfil and response.foto_perfil.strip():
         try:
-            # Verificar se já é uma URL completa (não deve acontecer, mas por segurança)
             if response.foto_perfil.startswith('http://') or response.foto_perfil.startswith('https://'):
                 # Já é uma URL, manter como está (pode ser uma presigned URL ainda válida)
                 pass
@@ -96,7 +95,6 @@ def upload_user_photo(
         # Or use presigned URL if needed
         foto_url = f"/uploads/profile-photos/{object_name.split('/')[-1]}" if '/' in object_name else f"/uploads/profile-photos/{object_name}"
         
-        # Update user with photo URL
         user_update = UserUpdate(foto_perfil=object_name)  # Store MinIO object name
         db_user = UserService.update_user(db, user_id=current_user.id, user_update=user_update)
         
@@ -198,14 +196,12 @@ def change_password(
             detail="A nova senha deve ter pelo menos 6 caracteres"
         )
     
-    # Verificar senha antiga
     if not verify_password(old_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Senha antiga incorreta"
         )
     
-    # Atualizar senha
     user_update = UserUpdate(password=get_password_hash(new_password))
     db_user = UserService.update_user(db, user_id=current_user.id, user_update=user_update)
     
@@ -249,7 +245,6 @@ def read_users(
         # Generate presigned URL for photo if available
         if response.foto_perfil and response.foto_perfil.strip():
             try:
-                # Verificar se já é uma URL completa
                 if response.foto_perfil.startswith('http'):
                     # Já é uma URL, manter como está
                     pass
@@ -287,7 +282,6 @@ def create_user(
     current_user: User = Depends(get_current_admin_user)
 ):
     """Create new user (admin only) - Compatible with frontend"""
-    # Convert frontend data format to internal format
     if "name" in user_data:
         # Frontend format: name -> name + generate username
         name = user_data.get("name", "")
@@ -303,7 +297,6 @@ def create_user(
             "is_admin": user_data.get("role") == "admin"
         }
         
-        # Handle setorId - convert to UUID if provided and not "none"
         setor_id = user_data.get("setorId")
         if setor_id and setor_id != "none":
             try:
@@ -317,7 +310,6 @@ def create_user(
         # Standard API format
         user = UserCreate(**user_data)
     
-    # Check if user already exists
     db_user = UserService.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -339,7 +331,6 @@ def update_user(
     current_user: User = Depends(get_current_admin_user)
 ):
     """Update user (admin only) - Compatible with frontend"""
-    # Convert frontend data format to internal format
     if "name" in user_data:
         # Frontend format: name -> name, role -> is_admin, setorId -> setor_id
         update_data = {}
@@ -354,7 +345,6 @@ def update_user(
         if "role" in user_data:
             update_data["is_admin"] = user_data["role"] == "admin"
         
-        # Handle setorId - convert to UUID if provided and not "none"
         if "setorId" in user_data:
             setor_id = user_data.get("setorId")
             if setor_id and setor_id != "none":

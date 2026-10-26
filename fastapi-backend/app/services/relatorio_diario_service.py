@@ -21,7 +21,6 @@ class RelatorioDiarioService:
     
     def create_relatorio(self, relatorio_data: RelatorioDiarioCreate) -> RelatorioDiario:
         """Criar um novo relatório diário"""
-        # Extrair IDs das atividades antes de criar o relatório
         atividades_ids = relatorio_data.atividades_realizadas_ids or []
         relatorio_dict = relatorio_data.model_dump()
         relatorio_dict.pop('atividades_realizadas_ids', None)
@@ -96,11 +95,9 @@ class RelatorioDiarioService:
         # Tratar atividades separadamente
         atividades_ids = update_data.pop('atividades_realizadas_ids', None)
         
-        # Atualizar campos normais
         for field, value in update_data.items():
             setattr(relatorio, field, value)
         
-        # Atualizar atividades se fornecidas
         if atividades_ids is not None:
             from app.models.atividade import Atividade
             if atividades_ids:
@@ -247,11 +244,9 @@ class RelatorioDiarioService:
         
         monthly_data = monthly_query.all()
         
-        # Converter para formato do dashboard
         monthly_chart_data = []
         for row in monthly_data:
             month_name = datetime(int(row.ano), int(row.mes), 1).strftime('%b')
-            # Calcular lucro como receita - investimento
             faturamento = float(row.total_deposito or 0) + float(row.total_comissao or 0)
             despesas = float(row.total_investido or 0)
             lucro = faturamento - despesas
@@ -276,7 +271,6 @@ class RelatorioDiarioService:
             func.count(RelatorioDiario.id).label('total_relatorios')
         ).first()
         
-        # Calcular métricas financeiras
         total_faturamento = float(total_stats.total_deposito or 0) + float(total_stats.total_comissao or 0)
         total_despesas = float(total_stats.total_investido or 0)
         total_lucro = total_faturamento - total_despesas
